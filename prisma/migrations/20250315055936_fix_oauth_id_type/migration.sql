@@ -1,0 +1,2 @@
+-- AlterTable
+ALTER TABLE "User" ALTER COLUMN "oauthId" SET DATA TYPE BIGINT;
