@@ -25,6 +25,21 @@ export class UserService {
   async emailCheck(email: string) {
     const user = await this.findByEmail(email);
     if (user) {
+      if (user?.kakao) {
+        const date = format(user.kakao, 'yyyy년 M월 d일');
+        console.error(`${date}에 카카오로 가입된 이메일입니다.`);
+        return {
+          status: 'error',
+          message: `${date}에 카카오로 가입된 이메일입니다.`,
+        };
+      } else if (user?.google) {
+        const date = format(user.google, 'yyyy년 M월 d일');
+        console.error(`${date}에 구글로 가입된 이메일입니다.`);
+        return {
+          status: 'error',
+          message: `${date}에 구글로 가입된 이메일입니다.`,
+        };
+      }
       console.error('이미 가입된 이메일입니다.');
       return { status: 'error', message: '이미 가입된 이메일입니다.' };
     }
@@ -37,24 +52,6 @@ export class UserService {
     if (user) {
       console.error('이미 가입된 이메일입니다.');
       return { status: 'error', message: '이미 가입된 이메일입니다.' };
-    }
-
-    if (user.kakao !== null) {
-      const date = format(user.kakao, 'yyyy년 M월 d일');
-      console.error(`${date}에 카카오로 가입된 이메일입니다.`);
-      return {
-        status: 'kakao',
-        message: `${date}에 카카오로 가입된 이메일입니다.`,
-      };
-    }
-
-    if (user.google !== null) {
-      const date = format(user.google, 'yyyy년 M월 d일');
-      console.error(`${date}에 구글로 가입된 이메일입니다.`);
-      return {
-        status: 'google',
-        message: `${date}에 구글로 가입된 이메일입니다.`,
-      };
     }
 
     const verifyToken = uuid.v4();
