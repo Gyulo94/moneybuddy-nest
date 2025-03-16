@@ -227,12 +227,14 @@ export class AuthService {
         verifyToken: null,
       },
     });
-    return { status: 'success', message: '이메일 인증이 완료되었습니다.' };
+
+    return {
+      status: 'success',
+      message: '이메일 인증이 완료되었습니다. 다시 로그인 해주세요.',
+    };
   }
 
-  async checkOauthAccount(
-    email: string,
-  ): Promise<{ isOauth: string; oauthDate?: string }> {
+  async checkOauthAccount(email: string) {
     const user = await this.prisma.user.findUnique({ where: { email } });
     if (user && user.kakao) {
       const date = format(user.kakao, 'yyyy년 M월 d일');
@@ -243,5 +245,6 @@ export class AuthService {
       const date = format(user.google, 'yyyy년 M월 d일');
       return { isOauth: 'google', oauthDate: date };
     }
+    return null;
   }
 }

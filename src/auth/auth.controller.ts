@@ -46,6 +46,9 @@ export class AuthController {
   @Post('check-oauth')
   async checkOauth(@Body('email') email: string) {
     const oauthInfo = await this.authService.checkOauthAccount(email);
+    if (!oauthInfo) {
+      return { isOauth: null, oauthDate: null };
+    }
     return { isOauth: oauthInfo.isOauth, oauthDate: oauthInfo.oauthDate };
   }
 
