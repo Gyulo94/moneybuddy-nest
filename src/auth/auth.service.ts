@@ -11,7 +11,7 @@ import { UserService } from 'src/user/user.service';
 import { LoginDto } from './dto/auth.dto';
 import { OauthLoginDto } from './dto/kakao-auth.dto';
 
-const EXPIRE_TIME = 20 * 1000;
+const EXPIRE_TIME = 60 * 60 * 1000;
 
 @Injectable()
 export class AuthService {
@@ -34,17 +34,7 @@ export class AuthService {
     };
     return {
       user,
-      serverTokens: {
-        access_token: await this.jwtService.signAsync(payload, {
-          expiresIn: '20s',
-          secret: process.env.JWT_SECRET_KEY,
-        }),
-        refresh_token: await this.jwtService.signAsync(payload, {
-          expiresIn: '7d',
-          secret: process.env.JWT_REFRESH_TOKEN_KEY,
-        }),
-        expiresIn: new Date().setTime(new Date().getTime() + EXPIRE_TIME),
-      },
+      serverTokens: await this.generateTokens(payload),
     };
   }
 
@@ -74,17 +64,7 @@ export class AuthService {
 
       return {
         user: newUser,
-        serverTokens: {
-          access_token: await this.jwtService.signAsync(payload, {
-            expiresIn: '20s',
-            secret: process.env.JWT_SECRET_KEY,
-          }),
-          refresh_token: await this.jwtService.signAsync(payload, {
-            expiresIn: '7d',
-            secret: process.env.JWT_REFRESH_TOKEN_KEY,
-          }),
-          expiresIn: new Date().setTime(new Date().getTime() + EXPIRE_TIME),
-        },
+        serverTokens: await this.generateTokens(payload),
       };
     } else {
       const payload = {
@@ -96,17 +76,7 @@ export class AuthService {
       };
       return {
         user,
-        serverTokens: {
-          access_token: await this.jwtService.signAsync(payload, {
-            expiresIn: '20s',
-            secret: process.env.JWT_SECRET_KEY,
-          }),
-          refresh_token: await this.jwtService.signAsync(payload, {
-            expiresIn: '7d',
-            secret: process.env.JWT_REFRESH_TOKEN_KEY,
-          }),
-          expiresIn: new Date().setTime(new Date().getTime() + EXPIRE_TIME),
-        },
+        serverTokens: await this.generateTokens(payload),
       };
     }
   }
@@ -137,17 +107,7 @@ export class AuthService {
 
       return {
         user: newUser,
-        serverTokens: {
-          access_token: await this.jwtService.signAsync(payload, {
-            expiresIn: '20s',
-            secret: process.env.JWT_SECRET_KEY,
-          }),
-          refresh_token: await this.jwtService.signAsync(payload, {
-            expiresIn: '7d',
-            secret: process.env.JWT_REFRESH_TOKEN_KEY,
-          }),
-          expiresIn: new Date().setTime(new Date().getTime() + EXPIRE_TIME),
-        },
+        serverTokens: await this.generateTokens(payload),
       };
     } else {
       const payload = {
@@ -159,17 +119,7 @@ export class AuthService {
       };
       return {
         user,
-        serverTokens: {
-          access_token: await this.jwtService.signAsync(payload, {
-            expiresIn: '20s',
-            secret: process.env.JWT_SECRET_KEY,
-          }),
-          refresh_token: await this.jwtService.signAsync(payload, {
-            expiresIn: '7d',
-            secret: process.env.JWT_REFRESH_TOKEN_KEY,
-          }),
-          expiresIn: new Date().setTime(new Date().getTime() + EXPIRE_TIME),
-        },
+        serverTokens: await this.generateTokens(payload),
       };
     }
   }
@@ -194,17 +144,7 @@ export class AuthService {
       sub: user.sub,
     };
 
-    return {
-      access_token: await this.jwtService.signAsync(payload, {
-        expiresIn: '20s',
-        secret: process.env.JWT_SECRET_KEY,
-      }),
-      refresh_token: await this.jwtService.signAsync(payload, {
-        expiresIn: '7d',
-        secret: process.env.JWT_REFRESH_TOKEN_KEY,
-      }),
-      expiresIn: new Date().setTime(new Date().getTime() + EXPIRE_TIME),
-    };
+    return await this.generateTokens(payload);
   }
 
   async verifyEmail(token: string) {
@@ -231,6 +171,20 @@ export class AuthService {
     return {
       status: 'success',
       message: '이메일 인증이 완료되었습니다. 다시 로그인 해주세요.',
+    };
+  }
+
+  private async generateTokens(payload: any) {
+    return {
+      access_token: await this.jwtService.signAsync(payload, {
+        expiresIn: '1h',
+        secret: process.env.JWT_SECRET_KEY,
+      }),
+      refresh_token: await this.jwtService.signAsync(payload, {
+        expiresIn: '7d',
+        secret: process.env.JWT_REFRESH_TOKEN_KEY,
+      }),
+      expiresIn: new Date().setTime(new Date().getTime() + EXPIRE_TIME),
     };
   }
 
