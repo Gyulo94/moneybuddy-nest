@@ -7,9 +7,10 @@ import { JwtGuard } from './auth/guards/jwt.guard';
 import { RoleGuard } from './auth/guards/role.guard';
 import { UserModule } from './user/user.module';
 import { EmailModule } from './email/email.module';
+import { CommonModule } from './common/common.module';
 
 @Module({
-  imports: [ConfigModule.forRoot(), UserModule, AuthModule, EmailModule],
+  imports: [ConfigModule.forRoot(), UserModule, AuthModule, EmailModule, CommonModule],
   controllers: [],
   providers: [
     {
