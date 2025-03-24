@@ -1,9 +1,3 @@
-// This is your Prisma schema file,
-// learn more about it in the docs: https://pris.ly/d/prisma-schema
-
-// Looking for ways to speed up your queries, or scale easily with your serverless or edge functions?
-// Try Prisma Accelerate: https://pris.ly/cli/accelerate-init
-
 generator client {
   provider = "prisma-client-js"
 }
@@ -13,22 +7,82 @@ datasource db {
   url      = env("DATABASE_URL")
 }
 
+model User {
+  id              String          @id @default(uuid())
+  email           String          @unique
+  image           String?
+  name            String?
+  password        String
+  role            Role            @default(USER)
+  isEmailVerified Boolean         @default(false)
+  verifyToken     String?
+  kakao           DateTime?
+  google          DateTime?
+  createdAt       DateTime        @default(now())
+  updatedAt       DateTime        @updatedAt
+  monthlyBudgets  MonthlyBudget[]
+  transactions    Transaction[]
+}
+
+model Category {
+  id            String          @id @default(uuid())
+  name          String
+  color         String
+  icon          String
+  createdAt     DateTime        @default(now())
+  type          TransactionType
+  transactions  Transaction[]
+  subCategories SubCategory[]
+}
+
+model SubCategory {
+  id           String        @id @default(uuid())
+  name         String
+  categoryId   String
+  createdAt    DateTime      @default(now())
+  category     Category      @relation(fields: [categoryId], references: [id])
+  transactions Transaction[]
+}
+
+model MonthlyBudget {
+  id        String   @id @default(uuid())
+  userId    String
+  month     String
+  budget    Int
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+  user      User     @relation(fields: [userId], references: [id])
+}
+
+model Transaction {
+  id            Int             @id @default(autoincrement())
+  date          DateTime
+  type          TransactionType
+  categoryId    String?
+  subCategoryId String?
+  userId        String
+  description   String
+  amount        Int
+  memo          String?
+  category      Category?       @relation(fields: [categoryId], references: [id]) // Category와의 관계
+  subCategory   SubCategory?    @relation(fields: [subCategoryId], references: [id]) // SubCategory와의 관계
+  user          User            @relation(fields: [userId], references: [id])
+  tags          Tag[]           @relation("TagToTransaction")
+}
+
+model Tag {
+  id           Int           @id @default(autoincrement())
+  name         String
+  createdAt    DateTime      @default(now())
+  transactions Transaction[] @relation("TagToTransaction")
+}
+
 enum Role {
   USER
   ADMIN
 }
 
-model User {
-  id              String    @id @default(uuid())
-  email           String    @unique
-  image           String?
-  name            String?
-  password        String
-  role            Role      @default(USER)
-  isEmailVerified Boolean   @default(false)
-  verifyToken     String?
-  kakao           DateTime?
-  google          DateTime?
-  createdAt       DateTime  @default(now())
-  updatedAt       DateTime  @updatedAt
+enum TransactionType {
+  INCOME
+  EXPENSE
 }

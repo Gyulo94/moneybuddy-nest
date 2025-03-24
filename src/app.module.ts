@@ -13,6 +13,8 @@ import { CommonModule } from './common/common.module';
 import { RequestMiddleware } from './common/utils/middleware';
 import { EmailModule } from './email/email.module';
 import { UserModule } from './user/user.module';
+import { CategoryModule } from './category/category.module';
+import { TransactionModule } from './transaction/transaction.module';
 
 @Module({
   imports: [
@@ -21,6 +23,8 @@ import { UserModule } from './user/user.module';
     AuthModule,
     EmailModule,
     CommonModule,
+    CategoryModule,
+    TransactionModule,
   ],
   controllers: [],
   providers: [

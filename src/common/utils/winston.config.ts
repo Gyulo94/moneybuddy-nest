@@ -33,7 +33,7 @@ export const winstonLogger = WinstonModule.createLogger({
           ? winston.format.simple()
           : winston.format.combine(
               winston.format.timestamp(),
-              utilities.format.nestLike('Nest JS Project', {
+              utilities.format.nestLike('Money Buddy', {
                 prettyPrint: true,
               }),
             ),
