@@ -15,6 +15,7 @@ import { EmailModule } from './email/email.module';
 import { UserModule } from './user/user.module';
 import { CategoryModule } from './category/category.module';
 import { TransactionModule } from './transaction/transaction.module';
+import { TagModule } from './tag/tag.module';
 
 @Module({
   imports: [
@@ -25,6 +26,7 @@ import { TransactionModule } from './transaction/transaction.module';
     CommonModule,
     CategoryModule,
     TransactionModule,
+    TagModule,
   ],
   controllers: [],
   providers: [

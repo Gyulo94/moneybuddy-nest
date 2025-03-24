@@ -22,6 +22,7 @@ model User {
   updatedAt       DateTime        @updatedAt
   monthlyBudgets  MonthlyBudget[]
   transactions    Transaction[]
+  tags            Tag[]
 }
 
 model Category {
@@ -71,10 +72,12 @@ model Transaction {
 }
 
 model Tag {
-  id           Int           @id @default(autoincrement())
+  id           String        @id @default(uuid())
   name         String
+  userId       String
   createdAt    DateTime      @default(now())
   transactions Transaction[] @relation("TagToTransaction")
+  user         User          @relation(fields: [userId], references: [id])
 }
 
 enum Role {

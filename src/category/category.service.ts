@@ -4,7 +4,7 @@ import { CreateCategoryDto } from './dto/create-category.dto';
 
 @Injectable()
 export class CategoryService {
-  constructor(private prisma: PrismaService) {}
+  constructor(private readonly prisma: PrismaService) {}
   async create(dto: CreateCategoryDto) {
     const { name, color, icon, type } = dto;
     return await this.prisma.category.create({
