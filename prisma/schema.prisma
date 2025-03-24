@@ -73,7 +73,7 @@ model Transaction {
 
 model Tag {
   id           String        @id @default(uuid())
-  name         String
+  name         String        @unique
   userId       String
   createdAt    DateTime      @default(now())
   transactions Transaction[] @relation("TagToTransaction")
