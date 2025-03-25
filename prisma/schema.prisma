@@ -64,6 +64,7 @@ model Transaction {
   userId        String
   description   String
   amount        Int
+  method        String
   memo          String?
   category      Category?       @relation(fields: [categoryId], references: [id]) // Category와의 관계
   subCategory   SubCategory?    @relation(fields: [subCategoryId], references: [id]) // SubCategory와의 관계

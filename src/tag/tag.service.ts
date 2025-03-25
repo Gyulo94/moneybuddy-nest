@@ -5,10 +5,11 @@ import { CreateTagDto } from './dto/create-tag.dto';
 @Injectable()
 export class TagService {
   constructor(private readonly prisma: PrismaService) {}
-  async create(dto: CreateTagDto, userId: string) {
+  async create(dto: CreateTagDto) {
+    const { userId, name } = dto;
     return this.prisma.tag.create({
       data: {
-        ...dto,
+        name,
         user: { connect: { id: userId } },
       },
     });

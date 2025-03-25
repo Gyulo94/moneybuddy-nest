@@ -6,32 +6,24 @@ import { UpdateTransactionDto } from './dto/update-transaction.dto';
 @Injectable()
 export class TransactionService {
   constructor(private readonly prisma: PrismaService) {}
-  async create(dto: CreateTransactionDto, userId: string) {
+  async create(dto: CreateTransactionDto) {
+    console.log('Service', dto);
     const user = await this.prisma.user.findUnique({
-      where: { id: userId },
+      where: { id: dto.userId },
     });
 
     if (!user) {
-      throw new NotFoundException();
+      throw new NotFoundException('존재하지 않는 유저의 ID입니다.');
     }
 
     const date = new Date(dto.date);
+    date.setUTCHours(0, 0, 0, 0);
+    console.log('date', date);
+
     if (dto.time) {
       const [hours, minutes] = dto.time.split(':').map(Number);
-      date.setHours(hours, minutes, 0, 0);
+      date.setUTCHours(hours, minutes, 0, 0);
     }
-
-    const tagArr = await Promise.all(
-      dto.tags.map(async (tagName) => {
-        let tag = await this.prisma.tag.findUnique({
-          where: { name: tagName },
-        });
-        if (!tag) {
-          throw new NotFoundException();
-        }
-        return tag;
-      }),
-    );
 
     return await this.prisma.transaction.create({
       data: {
@@ -39,13 +31,15 @@ export class TransactionService {
         amount: dto.amount,
         description: dto.description,
         type: dto.type,
-        memo: dto.memo,
-        user: { connect: { id: userId } },
+        memo: dto.memo || null,
+        user: { connect: { id: dto.userId } },
         category: dto.categoryId ? { connect: { id: dto.categoryId } } : null,
         subCategory: dto.subCategoryId
           ? { connect: { id: dto.subCategoryId } }
           : null,
-        tags: { connect: tagArr.map((tag) => ({ id: tag.id })) },
+        tags: {
+          connect: dto.tags.map((tagId) => ({ id: tagId })),
+        },
       },
       include: {
         category: true,
@@ -57,7 +51,14 @@ export class TransactionService {
   }
 
   findAll() {
-    return `This action returns all transaction`;
+    return this.prisma.transaction.findMany({
+      include: {
+        category: true,
+        subCategory: true,
+        tags: true,
+        user: true,
+      },
+    });
   }
 
   findOne(id: number) {

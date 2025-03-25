@@ -14,6 +14,9 @@ export class CreateTransactionDto {
   @IsString()
   time: string;
 
+  @IsString()
+  userId: string;
+
   @IsNumber()
   amount: number;
 
@@ -29,6 +32,9 @@ export class CreateTransactionDto {
   subCategoryId?: string;
 
   @IsString()
+  method: string;
+
+  @IsString()
   type: 'INCOME' | 'EXPENSE';
 
   @IsArray()
@@ -36,5 +42,6 @@ export class CreateTransactionDto {
   tags: string[];
 
   @IsString()
+  @IsOptional()
   memo: string;
 }

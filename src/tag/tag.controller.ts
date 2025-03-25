@@ -6,9 +6,9 @@ import { TagService } from './tag.service';
 export class TagController {
   constructor(private readonly tagService: TagService) {}
 
-  @Post(':userId')
-  create(@Body() dto: CreateTagDto, @Param('userId') userId: string) {
-    return this.tagService.create(dto, userId);
+  @Post()
+  create(@Body() dto: CreateTagDto) {
+    return this.tagService.create(dto);
   }
 
   @Get(':userId')

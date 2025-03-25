@@ -16,8 +16,10 @@ export class TransactionController {
   constructor(private readonly transactionService: TransactionService) {}
 
   @Post()
-  create(@Body() dto: CreateTransactionDto, @Param('userId') userId: string) {
-    return this.transactionService.create(dto, userId);
+  create(@Body() dto: CreateTransactionDto) {
+    console.log('controller', dto);
+
+    return this.transactionService.create(dto);
   }
 
   @Get()
