@@ -38,7 +38,7 @@ export class TransactionService {
         category: dto.categoryId ? { connect: { id: dto.categoryId } } : null,
         subCategory: dto.subCategoryId
           ? { connect: { id: dto.subCategoryId } }
-          : null,
+          : undefined,
         tags: {
           connect: dto.tags.map((tagId) => ({ id: tagId })),
         },
@@ -52,7 +52,7 @@ export class TransactionService {
     });
   }
 
-  async findAll(userId: string, type: 'INCOME' | 'EXPENSE') {
+  async findAll(userId: string, type?: 'INCOME' | 'EXPENSE') {
     const where: any = { userId };
 
     if (type) {
@@ -87,6 +87,7 @@ export class TransactionService {
       );
       const details = transactions.map((item) => ({
         id: item.id,
+        type: item.type,
         time: format(new Date(item.date), 'HH:mm'),
         icon: item.category?.icon || '',
         color: item.category?.color || '',
