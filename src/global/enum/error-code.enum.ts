@@ -31,7 +31,7 @@ export const ErrorCodeMap: Record<
   // 인증 관련
   [ErrorCode.UNAUTHORIZED]: {
     status: HttpStatus.UNAUTHORIZED,
-    message: '인증 정보가 유효하지 않습니다.',
+    message: '인증 정보가 유효하지 않습니다. 다시 로그인 해주세요.',
   },
   [ErrorCode.INVALID_TOKEN]: {
     status: HttpStatus.UNAUTHORIZED,

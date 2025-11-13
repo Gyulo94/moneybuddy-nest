@@ -8,6 +8,8 @@ import { Reflector } from '@nestjs/core';
 import { JwtService } from '@nestjs/jwt';
 import { Request } from 'express';
 import { IS_PUBLIC_KEY } from 'src/global/decorator/public.decorator';
+import { ErrorCode } from 'src/global/enum/error-code.enum';
+import { ApiException } from 'src/global/exception/api.exception';
 
 @Injectable()
 export class JwtGuard implements CanActivate {
@@ -32,7 +34,7 @@ export class JwtGuard implements CanActivate {
       });
       request['user'] = payload;
     } catch (error) {
-      throw new UnauthorizedException();
+      throw new ApiException(ErrorCode.UNAUTHORIZED);
     }
     return true;
   }
