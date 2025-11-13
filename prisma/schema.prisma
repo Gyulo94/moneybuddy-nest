@@ -1,0 +1,170 @@
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "postgresql"
+  url      = env("DATABASE_URL")
+}
+
+model User {
+  id            String          @id @default(dbgenerated("gen_random_uuid()")) @db.Uuid
+  createdAt     DateTime?       @default(now())
+  email         String          @unique
+  name          String
+  password      String?
+  provider      Provider        @default(이메일)
+  Account       Account[]
+  PaymentMethod PaymentMethod[]
+  Tag           Tag[]
+  Transaction   Transaction[]
+}
+
+model Account {
+  id             String          @id @default(dbgenerated("gen_random_uuid()")) @db.Uuid
+  accountNumber  String?         @db.VarChar(4)
+  accountType    String
+  createdAt      DateTime        @default(now())
+  currentBalance Int
+  initialBalance Int
+  name           String
+  updatedAt      DateTime
+  bankId         String?         @db.Uuid
+  userId         String          @db.Uuid
+  Bank           Bank?           @relation(fields: [bankId], references: [id])
+  User           User            @relation(fields: [userId], references: [id])
+  PaymentMethod  PaymentMethod[]
+  Transaction    Transaction[]
+
+  @@index([bankId])
+  @@index([userId, accountNumber])
+  @@index([userId, accountType])
+}
+
+model Bank {
+  id        String    @id @default(dbgenerated("gen_random_uuid()")) @db.Uuid
+  createdAt DateTime  @default(now())
+  logo      String?
+  name      String    @unique
+  updatedAt DateTime
+  Account   Account[]
+}
+
+model Category {
+  id          String        @id @default(dbgenerated("gen_random_uuid()")) @db.Uuid
+  color       String
+  icon        String
+  name        String
+  SubCategory SubCategory[]
+  Transaction Transaction[]
+}
+
+model Image {
+  id         String     @id @default(dbgenerated("gen_random_uuid()")) @db.Uuid
+  url        String
+  entityId   String     @db.Uuid
+  entityType EntityType
+  createdAt  DateTime   @default(now())
+}
+
+model Issuer {
+  id            String          @id @default(dbgenerated("gen_random_uuid()")) @db.Uuid
+  createdAt     DateTime        @default(now())
+  logo          String?
+  name          String          @unique
+  updatedAt     DateTime
+  PaymentMethod PaymentMethod[]
+}
+
+model PaymentMethod {
+  id          String        @id @default(dbgenerated("gen_random_uuid()")) @db.Uuid
+  cardNumber  String?
+  createdAt   DateTime      @default(now())
+  logo        String?
+  methodType  String
+  name        String?
+  updatedAt   DateTime?
+  accountId   String?       @db.Uuid
+  userId      String        @db.Uuid
+  issuerId    String?       @db.Uuid
+  Account     Account?      @relation(fields: [accountId], references: [id])
+  Issuer      Issuer?       @relation(fields: [issuerId], references: [id])
+  User        User          @relation(fields: [userId], references: [id])
+  Transaction Transaction[]
+
+  @@index([accountId])
+  @@index([issuerId])
+  @@index([userId])
+}
+
+model SubCategory {
+  id          String        @id @default(dbgenerated("gen_random_uuid()")) @db.Uuid
+  name        String
+  categoryId  String?       @db.Uuid
+  Category    Category?     @relation(fields: [categoryId], references: [id])
+  Transaction Transaction[]
+
+  @@index([categoryId])
+}
+
+model Tag {
+  id             String           @id @default(dbgenerated("gen_random_uuid()")) @db.Uuid
+  bgColor        String           @db.VarChar(16)
+  name           String           @unique
+  textColor      String           @db.VarChar(16)
+  userId         String           @db.Uuid
+  User           User             @relation(fields: [userId], references: [id])
+  TransactionTag TransactionTag[]
+}
+
+model Transaction {
+  id              String           @id @default(dbgenerated("gen_random_uuid()")) @db.Uuid
+  amount          Int
+  createdAt       DateTime         @default(now())
+  description     String?
+  memo            String?
+  method          String?
+  transactionAt   DateTime         @db.Timestamp(6)
+  type            Int              @db.SmallInt
+  updatedAt       DateTime
+  accountId       String           @db.Uuid
+  categoryId      String           @db.Uuid
+  paymentMethodId String?          @db.Uuid
+  subCategoryId   String?          @db.Uuid
+  userId          String           @db.Uuid
+  Account         Account          @relation(fields: [accountId], references: [id])
+  Category        Category         @relation(fields: [categoryId], references: [id])
+  PaymentMethod   PaymentMethod?   @relation(fields: [paymentMethodId], references: [id])
+  SubCategory     SubCategory?     @relation(fields: [subCategoryId], references: [id])
+  User            User             @relation(fields: [userId], references: [id])
+  TransactionTag  TransactionTag[]
+
+  @@index([accountId])
+  @@index([categoryId])
+  @@index([paymentMethodId])
+  @@index([subCategoryId])
+  @@index([type])
+  @@index([userId])
+  @@index([userId, transactionAt])
+}
+
+model TransactionTag {
+  transactionId String      @db.Uuid
+  tagId         String      @db.Uuid
+  Tag           Tag         @relation(fields: [tagId], references: [id], onDelete: Cascade)
+  Transaction   Transaction @relation(fields: [transactionId], references: [id], onDelete: Cascade)
+
+  @@id([transactionId, tagId])
+  @@index([tagId])
+  @@index([transactionId])
+}
+
+enum EntityType {
+  USER
+}
+
+enum Provider {
+  이메일
+  구글
+  카카오
+}

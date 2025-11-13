@@ -1,0 +1,132 @@
+import Mail = require('nodemailer/lib/mailer');
+import { Injectable } from '@nestjs/common';
+import * as nodemailer from 'nodemailer';
+import { ErrorCode } from 'src/global/enum/error-code.enum';
+import { ApiException } from 'src/global/exception/api.exception';
+import { PrismaService } from 'src/global/prisma/prisma.service';
+import { RedisService } from 'src/redis/service/redis.service';
+import { UserService } from 'src/user/service/user.service';
+import * as uuid from 'uuid';
+
+interface EmailOptions {
+  to: string;
+  subject: string;
+  html: string;
+}
+
+@Injectable()
+export class EmailService {
+  private transporter: Mail;
+
+  constructor(
+    private readonly prisma: PrismaService,
+    private readonly redis: RedisService,
+    private readonly userService: UserService,
+  ) {
+    this.transporter = nodemailer.createTransport({
+      service: 'Gmail',
+      auth: {
+        user: process.env.GMAIL_EMAIL,
+        pass: process.env.GMAIL_APP_PASSWORD,
+      },
+    });
+  }
+
+  async sendVerificationMail(
+    email: string,
+    type: 'signup' | 'reset',
+  ): Promise<void> {
+    const user = await this.userService.findByEmail(email);
+
+    if (type === 'signup' && user) {
+      throw new ApiException(ErrorCode.ALREADY_EXIST_EMAIL);
+    } else if (type === 'reset' && !user) {
+      throw new ApiException(ErrorCode.NOT_FOUND_EMAIL);
+    } else if (type === 'reset' && user.provider !== '이메일') {
+      throw new ApiException(ErrorCode.NOT_ALLOWED_SOCIAL_USER);
+    }
+
+    const token = uuid.v4();
+    const value = `${process.env.PROJECT_NAME}:${type}:${email}`;
+    await this.redis.set(token, value, 86400);
+
+    const url = this.generateUrl(type, token);
+    const mailOptions = this.generateMailOptions(email, type, url);
+
+    await this.transporter.sendMail(mailOptions);
+  }
+
+  private generateUrl(type: 'signup' | 'reset', token: string): string {
+    const CLIENT_URL = process.env.CLIENT_URL;
+    return type === 'signup'
+      ? `${CLIENT_URL}/signup/${token}`
+      : `${CLIENT_URL}/reset-password/${token}`;
+  }
+
+  private generateMailOptions(
+    email: string,
+    type: 'signup' | 'reset',
+    url: string,
+  ): EmailOptions {
+    const subject =
+      type === 'signup'
+        ? `${process.env.APP_NAME} - 회원가입 메일`
+        : `${process.env.APP_NAME} - 비밀번호 찾기`;
+    const actionText = type === 'signup' ? '회원가입이' : '비밀번호 찾기가';
+    const description =
+      type === 'signup'
+        ? '회원가입을 진행해주세요.'
+        : '비밀번호 찾기를 진행해주세요.';
+    const buttonText = type === 'signup' ? '회원가입' : '비밀번호 찾기';
+
+    return {
+      to: email,
+      subject,
+      html: `
+        <div style="width: 100%; min-height: 1300px">
+          <div
+            style="
+              text-align: center;
+              width: 800px;
+              margin: 30px auto;
+              padding: 40px 80px;
+              border: 1px solid #ededed;
+              background: #fff;
+              box-sizing: border-box;
+            "
+          >
+            <img
+              style="width: 150px"
+              src=${process.env.APP_LOGO}
+              alt="logo"
+            />
+            <h1>${process.env.APP_NAME}</h1>
+            <p
+              style="
+                padding-top: 20px;
+                font-weight: 700;
+                font-size: 20px;
+                line-height: 1.5;
+                color: #222;
+              "
+            >
+              ${description}
+            </p>
+            <p
+              style="
+                font-size: 16px;
+                font-weight: 400;
+                line-height: 1.5;
+                margin-bottom: 40px;
+                color: #6a7282;
+              "
+            >
+              하단 버튼을 누르시면 ${actionText} 계속 진행됩니다.
+            </p>
+            <a href=${url} target=${'_self'} style="background: #404040;text-decoration: none;padding: 10px 24px;font-size: 18px;color: #fff;font-weight: 400;border-radius: 4px;">${buttonText}</a>
+          </div>
+        </div>
+      `,
+    };
+  }
+}
