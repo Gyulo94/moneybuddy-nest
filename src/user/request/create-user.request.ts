@@ -8,7 +8,7 @@ export class CreateUserRequest {
 
   @IsString()
   @IsOptional()
-  image: string;
+  image?: string;
 
   @IsEmail()
   email: string;
@@ -22,7 +22,7 @@ export class CreateUserRequest {
 
   @IsString()
   @IsOptional()
-  token: string;
+  token?: string;
 
   @IsString()
   @IsOptional()

@@ -18,6 +18,24 @@ export class ImageService {
   async createImages(request: ImageRequest): Promise<string[]> {
     const { id, images, entity } = request;
 
+    if (
+      images &&
+      images.some(
+        (url) =>
+          url.includes('k.kakaocdn.net') ||
+          url.includes('lh3.googleusercontent.com'),
+      )
+    ) {
+      const requestObj = {
+        entityId: id,
+        urls: images,
+        entityType: entity,
+      };
+      await this.imageRepository.saveAll(requestObj);
+      const savedUrls = await this.findByEntityIdAndEntityType(id, entity);
+      return savedUrls;
+    }
+
     const requestObj = {
       id,
       images,
