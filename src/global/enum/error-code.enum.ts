@@ -10,6 +10,13 @@ export enum ErrorCode {
   TOO_MANY_REFRESH_REQUESTS = 'AUTH_006',
   ALREADY_EXIST_EMAIL = 'AUTH_007',
 
+  // 은행 관련 에러
+  BANK_NOT_FOUND = 'BANK_001',
+
+  // 계좌 관련 에러
+  ACCOUNT_NOT_FOUND = 'ACCOUNT_001',
+  CREATE_ACCOUNT_FAILED = 'ACCOUNT_002',
+
   // 사용자 관련 에러
   USER_NOT_FOUND = 'USER_001',
   DUPLICATE_EMAIL = 'USER_002',
@@ -65,6 +72,22 @@ export const ErrorCodeMap: Record<
   [ErrorCode.ALREADY_EXIST_EMAIL]: {
     status: HttpStatus.CONFLICT,
     message: '이미 존재하는 이메일입니다.',
+  },
+
+  // 은행 관련
+  [ErrorCode.BANK_NOT_FOUND]: {
+    status: HttpStatus.NOT_FOUND,
+    message: '해당 은행을 찾을 수 없습니다.',
+  },
+
+  // 계좌 관련
+  [ErrorCode.ACCOUNT_NOT_FOUND]: {
+    status: HttpStatus.NOT_FOUND,
+    message: '해당 계좌를 찾을 수 없습니다.',
+  },
+  [ErrorCode.CREATE_ACCOUNT_FAILED]: {
+    status: HttpStatus.INTERNAL_SERVER_ERROR,
+    message: '계좌 생성에 실패했습니다.',
   },
 
   // 사용자 관련

@@ -6,6 +6,7 @@ import {
 } from '@nestjs/common';
 import { ConfigModule } from '@nestjs/config';
 import { APP_GUARD } from '@nestjs/core';
+import { AccountModule } from './account/account.module';
 import { AuthModule } from './auth/auth.module';
 import { JwtGuard } from './auth/guards/jwt.guard';
 import { BankModule } from './bank/bank.module';
@@ -20,6 +21,7 @@ import { UserModule } from './user/user.module';
     AuthModule,
     UserModule,
     BankModule,
+    AccountModule,
   ],
   controllers: [],
   providers: [

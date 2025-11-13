@@ -28,7 +28,7 @@ model Account {
   currentBalance Int
   initialBalance Int
   name           String
-  updatedAt      DateTime
+  updatedAt      DateTime        @updatedAt
   bankId         String?         @db.Uuid
   userId         String          @db.Uuid
   Bank           Bank?           @relation(fields: [bankId], references: [id])
