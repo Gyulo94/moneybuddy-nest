@@ -8,9 +8,9 @@ import { ConfigModule } from '@nestjs/config';
 import { APP_GUARD } from '@nestjs/core';
 import { AuthModule } from './auth/auth.module';
 import { JwtGuard } from './auth/guards/jwt.guard';
+import { BankModule } from './bank/bank.module';
 import { GlobalModule } from './global/global.module';
 import { RequestMiddleware } from './global/utils/logger.middleware';
-import { ImageModule } from './image/image.module';
 import { UserModule } from './user/user.module';
 
 @Module({
@@ -19,7 +19,7 @@ import { UserModule } from './user/user.module';
     GlobalModule,
     AuthModule,
     UserModule,
-    ImageModule,
+    BankModule,
   ],
   controllers: [],
   providers: [
