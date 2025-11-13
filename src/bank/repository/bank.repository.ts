@@ -7,7 +7,14 @@ export class BankRepository {
   constructor(private readonly prisma: PrismaService) {}
 
   async findAll(): Promise<Bank[]> {
-    const response: Bank[] = await this.prisma.bank.findMany();
-    return response;
+    const banks: Bank[] = await this.prisma.bank.findMany();
+    return banks;
+  }
+
+  async findById(id: string): Promise<Bank> {
+    const bank: Bank = await this.prisma.bank.findUnique({
+      where: { id },
+    });
+    return bank;
   }
 }
