@@ -9,11 +9,14 @@ datasource db {
 
 model User {
   id            String          @id @default(dbgenerated("gen_random_uuid()")) @db.Uuid
-  createdAt     DateTime?       @default(now())
   email         String          @unique
   name          String
   password      String?
   provider      Provider        @default(이메일)
+  imageId       String?         @unique @db.Uuid
+  image         Image?          @relation(fields: [imageId], references: [id])
+  createdAt     DateTime        @default(now())
+  updatedAt     DateTime        @updatedAt
   Account       Account[]
   PaymentMethod PaymentMethod[]
   Tag           Tag[]
@@ -24,15 +27,15 @@ model Account {
   id             String          @id @default(dbgenerated("gen_random_uuid()")) @db.Uuid
   accountNumber  String?         @db.VarChar(4)
   accountType    String
-  createdAt      DateTime        @default(now())
   currentBalance Int
   initialBalance Int
   name           String
-  updatedAt      DateTime        @updatedAt
   bankId         String?         @db.Uuid
   userId         String          @db.Uuid
   Bank           Bank?           @relation(fields: [bankId], references: [id])
   User           User            @relation(fields: [userId], references: [id])
+  createdAt      DateTime        @default(now())
+  updatedAt      DateTime        @updatedAt
   PaymentMethod  PaymentMethod[]
   Transaction    Transaction[]
 
@@ -42,12 +45,10 @@ model Account {
 }
 
 model Bank {
-  id        String    @id @default(dbgenerated("gen_random_uuid()")) @db.Uuid
-  createdAt DateTime  @default(now())
-  logo      String?
-  name      String    @unique
-  updatedAt DateTime
-  Account   Account[]
+  id      String    @id @default(dbgenerated("gen_random_uuid()")) @db.Uuid
+  logo    String?
+  name    String    @unique
+  Account Account[]
 }
 
 model Category {
@@ -60,33 +61,35 @@ model Category {
 }
 
 model Image {
-  id         String     @id @default(dbgenerated("gen_random_uuid()")) @db.Uuid
-  url        String
-  entityId   String     @db.Uuid
-  entityType EntityType
-  createdAt  DateTime   @default(now())
+  id            String       @id @default(dbgenerated("gen_random_uuid()")) @db.Uuid
+  url           String
+  user          User?
+  transactionId String?      @db.Uuid
+  createdAt     DateTime     @default(now())
+  updatedAt     DateTime     @updatedAt
+  transaction   Transaction? @relation(fields: [transactionId], references: [id])
 }
 
 model Issuer {
   id            String          @id @default(dbgenerated("gen_random_uuid()")) @db.Uuid
-  createdAt     DateTime        @default(now())
   logo          String?
   name          String          @unique
-  updatedAt     DateTime
+  createdAt     DateTime        @default(now())
+  updatedAt     DateTime        @updatedAt
   PaymentMethod PaymentMethod[]
 }
 
 model PaymentMethod {
   id          String        @id @default(dbgenerated("gen_random_uuid()")) @db.Uuid
   cardNumber  String?
-  createdAt   DateTime      @default(now())
   logo        String?
   methodType  String
   name        String?
-  updatedAt   DateTime?
   accountId   String?       @db.Uuid
   userId      String        @db.Uuid
   issuerId    String?       @db.Uuid
+  createdAt   DateTime      @default(now())
+  updatedAt   DateTime      @updatedAt
   Account     Account?      @relation(fields: [accountId], references: [id])
   Issuer      Issuer?       @relation(fields: [issuerId], references: [id])
   User        User          @relation(fields: [userId], references: [id])
@@ -108,36 +111,37 @@ model SubCategory {
 }
 
 model Tag {
-  id             String           @id @default(dbgenerated("gen_random_uuid()")) @db.Uuid
-  bgColor        String           @db.VarChar(16)
-  name           String           @unique
-  textColor      String           @db.VarChar(16)
-  userId         String           @db.Uuid
-  User           User             @relation(fields: [userId], references: [id])
-  TransactionTag TransactionTag[]
+  id           String        @id @default(dbgenerated("gen_random_uuid()")) @db.Uuid
+  bgColor      String        @db.VarChar(16)
+  name         String        @unique
+  textColor    String        @db.VarChar(16)
+  userId       String        @db.Uuid
+  User         User          @relation(fields: [userId], references: [id])
+  transactions Transaction[]
 }
 
 model Transaction {
-  id              String           @id @default(dbgenerated("gen_random_uuid()")) @db.Uuid
+  id              String         @id @default(dbgenerated("gen_random_uuid()")) @db.Uuid
   amount          Int
-  createdAt       DateTime         @default(now())
+  createdAt       DateTime       @default(now())
   description     String?
   memo            String?
   method          String?
-  transactionAt   DateTime         @db.Timestamp(6)
-  type            Int              @db.SmallInt
+  transactionAt   DateTime       @db.Timestamp(6)
+  type            Int            @db.SmallInt
   updatedAt       DateTime
-  accountId       String           @db.Uuid
-  categoryId      String           @db.Uuid
-  paymentMethodId String?          @db.Uuid
-  subCategoryId   String?          @db.Uuid
-  userId          String           @db.Uuid
-  Account         Account          @relation(fields: [accountId], references: [id])
-  Category        Category         @relation(fields: [categoryId], references: [id])
-  PaymentMethod   PaymentMethod?   @relation(fields: [paymentMethodId], references: [id])
-  SubCategory     SubCategory?     @relation(fields: [subCategoryId], references: [id])
-  User            User             @relation(fields: [userId], references: [id])
-  TransactionTag  TransactionTag[]
+  accountId       String         @db.Uuid
+  categoryId      String         @db.Uuid
+  paymentMethodId String?        @db.Uuid
+  subCategoryId   String?        @db.Uuid
+  userId          String         @db.Uuid
+  Account         Account        @relation(fields: [accountId], references: [id])
+  Category        Category       @relation(fields: [categoryId], references: [id])
+  PaymentMethod   PaymentMethod? @relation(fields: [paymentMethodId], references: [id])
+  SubCategory     SubCategory?   @relation(fields: [subCategoryId], references: [id])
+  User            User           @relation(fields: [userId], references: [id])
+  tags            Tag[]
+  images          Image[]
 
   @@index([accountId])
   @@index([categoryId])
@@ -146,21 +150,6 @@ model Transaction {
   @@index([type])
   @@index([userId])
   @@index([userId, transactionAt])
-}
-
-model TransactionTag {
-  transactionId String      @db.Uuid
-  tagId         String      @db.Uuid
-  Tag           Tag         @relation(fields: [tagId], references: [id], onDelete: Cascade)
-  Transaction   Transaction @relation(fields: [transactionId], references: [id], onDelete: Cascade)
-
-  @@id([transactionId, tagId])
-  @@index([tagId])
-  @@index([transactionId])
-}
-
-enum EntityType {
-  USER
 }
 
 enum Provider {

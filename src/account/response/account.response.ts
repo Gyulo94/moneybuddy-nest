@@ -1,4 +1,6 @@
+import { Account } from '@prisma/client';
 import { BankResponse } from 'src/bank/response/bank.response';
+import { UserResponse } from 'src/user/response/user.response';
 
 export class AccountResponse {
   id: string;
@@ -7,5 +9,31 @@ export class AccountResponse {
   initialBalance: number;
   currentBalance: number;
   bank?: BankResponse;
+  user?: UserResponse;
   accountNumber: string;
+
+  static fromModel(
+    entity: Account & { Bank?: BankResponse; User?: UserResponse },
+  ): AccountResponse {
+    const {
+      id,
+      name,
+      accountType,
+      initialBalance,
+      currentBalance,
+      accountNumber,
+      Bank,
+      User,
+    } = entity;
+    return {
+      id,
+      name,
+      accountType,
+      initialBalance,
+      currentBalance,
+      accountNumber,
+      Bank,
+      User,
+    } as AccountResponse;
+  }
 }
