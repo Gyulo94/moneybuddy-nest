@@ -1,7 +1,16 @@
+import { Bank } from '@prisma/client';
+
 export class BankResponse {
   id: string;
   name: string;
   logo: string;
-  createdAt: Date;
-  updatedAt: Date;
+
+  static fromModel(bank: Bank): BankResponse {
+    const { id, name, logo } = bank;
+    return {
+      id,
+      name,
+      logo,
+    } as BankResponse;
+  }
 }

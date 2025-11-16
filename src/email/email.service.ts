@@ -1,5 +1,5 @@
 import Mail = require('nodemailer/lib/mailer');
-import { Injectable } from '@nestjs/common';
+import { Injectable, Logger } from '@nestjs/common';
 import * as nodemailer from 'nodemailer';
 import { ErrorCode } from 'src/global/enum/error-code.enum';
 import { ApiException } from 'src/global/exception/api.exception';
@@ -16,6 +16,7 @@ interface EmailOptions {
 
 @Injectable()
 export class EmailService {
+  private readonly LOGGER = new Logger(EmailService.name);
   private transporter: Mail;
 
   constructor(
@@ -36,24 +37,45 @@ export class EmailService {
     email: string,
     type: 'signup' | 'reset',
   ): Promise<void> {
+    this.LOGGER.log(
+      `---------------------이메일 인증 메일 전송 서비스 실행--------------------`,
+    );
+    this.LOGGER.log(`이메일 인증 메일 전송 요청 받음`);
     const user = await this.userService.findByEmail(email);
 
     if (type === 'signup' && user) {
+      this.LOGGER.error(`이미 가입된 이메일입니다.`);
       throw new ApiException(ErrorCode.ALREADY_EXIST_EMAIL);
     } else if (type === 'reset' && !user) {
+      this.LOGGER.error(`가입되지 않은 이메일입니다.`);
       throw new ApiException(ErrorCode.NOT_FOUND_EMAIL);
     } else if (type === 'reset' && user.provider !== '이메일') {
+      this.LOGGER.error(`소셜 로그인 유저는 비밀번호 재설정을 할 수 없습니다.`);
       throw new ApiException(ErrorCode.NOT_ALLOWED_SOCIAL_USER);
     }
 
     const token = uuid.v4();
+    this.LOGGER.log(`1. Redis에 인증 토큰 저장 중...`);
     const value = `${process.env.PROJECT_NAME}:${type}:${email}`;
+    this.LOGGER.log(`2. 저장할 값: ${value}`);
     await this.redis.set(token, value, 86400);
+    this.LOGGER.log(`3. Redis에 인증 토큰 저장 완료. 만료 시간: 86400초`);
 
+    this.LOGGER.log(`4. 이메일 전송 준비 중...`);
     const url = this.generateUrl(type, token);
+    this.LOGGER.log(`5. 생성된 URL: ${url}`);
     const mailOptions = this.generateMailOptions(email, type, url);
-
+    this.LOGGER.log(`6. 이메일 전송 옵션 생성 완료. 이메일 전송 중...`);
+    this.LOGGER.log(
+      `7. 받는 사람: ${mailOptions.to}, 제목: ${mailOptions.subject}`,
+    );
+    this.LOGGER.log(`8. 이메일 전송 내용: ${mailOptions.html}`);
+    this.LOGGER.log(`9. 이메일 전송 시작...`);
     await this.transporter.sendMail(mailOptions);
+    this.LOGGER.log(`10. 이메일 전송 완료`);
+    this.LOGGER.log(
+      `---------------------이메일 인증 메일 전송 서비스 종료--------------------`,
+    );
   }
 
   private generateUrl(type: 'signup' | 'reset', token: string): string {
