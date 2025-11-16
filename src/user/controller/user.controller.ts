@@ -1,6 +1,6 @@
 import { Controller, Get } from '@nestjs/common';
 import { CurrentUser } from 'src/global/decorator/current-user.decorator';
-import { Payload } from 'src/global/types/payload';
+import { Payload } from 'src/global/types';
 import { UserService } from '../service/user.service';
 
 @Controller('user')
