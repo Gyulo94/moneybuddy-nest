@@ -5,4 +5,6 @@ export enum ResponseMessage {
   SEND_EMAIL_SUCCESS = '이메일을 성공적으로 보냈습니다. 링크를 통해 진행해주세요.',
   LOGOUT_SUCCESS = '로그아웃이 완료되었습니다.',
   CREATE_ACCOUNT_SUCCESS = '계좌가 성공적으로 생성되었습니다.',
+  UPDATE_ACCOUNT_SUCCESS = '계좌가 성공적으로 수정되었습니다.',
+  DELETE_ACCOUNT_SUCCESS = '계좌가 성공적으로 삭제되었습니다.',
 }

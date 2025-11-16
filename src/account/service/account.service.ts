@@ -1,6 +1,6 @@
 import { Injectable } from '@nestjs/common';
 import { OnEvent } from '@nestjs/event-emitter';
-import { Account } from '@prisma/client';
+import { Account, Prisma } from '@prisma/client';
 import { BankService } from 'src/bank/service/bank.service';
 import { ErrorCode } from 'src/global/enum/error-code.enum';
 import { UserSignupEvent } from 'src/global/event/user-signup.event';
@@ -51,5 +51,33 @@ export class AccountService {
   async findAccountsByUserId(userId: string): Promise<AccountResponse[]> {
     const response = await this.accountRepository.findAllByUserId(userId);
     return response;
+  }
+
+  async findById(id: string): Promise<Account> {
+    const account = await this.accountRepository.findById(id);
+    if (!account) {
+      throw new ApiException(ErrorCode.ACCOUNT_NOT_FOUND);
+    }
+    return account;
+  }
+
+  async updateAccount(
+    request: AccountRequest,
+    id: string,
+    userId: string,
+  ): Promise<AccountResponse> {
+    await this.findById(id);
+    const accountModel: Prisma.AccountUpdateInput = request.toModel(userId);
+    const updatedAccount = await this.accountRepository.update(
+      id,
+      accountModel,
+    );
+    const response = AccountResponse.fromModel(updatedAccount);
+    return response;
+  }
+
+  async deleteAccount(id: string): Promise<void> {
+    await this.findById(id);
+    await this.accountRepository.delete(id);
   }
 }

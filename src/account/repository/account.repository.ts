@@ -62,4 +62,59 @@ export class AccountRepository {
     });
     return accounts;
   }
+
+  async findById(id: string): Promise<Account> {
+    const account = await this.prisma.account.findUnique({
+      where: { id },
+      include: {
+        Bank: {
+          select: {
+            id: true,
+            name: true,
+            logo: true,
+          },
+        },
+        User: {
+          select: {
+            id: true,
+            name: true,
+            email: true,
+            image: true,
+          },
+        },
+      },
+    });
+    return account;
+  }
+
+  async update(id: string, data: Prisma.AccountUpdateInput): Promise<Account> {
+    const updatedAccount = await this.prisma.account.update({
+      where: { id },
+      data,
+      include: {
+        Bank: {
+          select: {
+            id: true,
+            name: true,
+            logo: true,
+          },
+        },
+        User: {
+          select: {
+            id: true,
+            name: true,
+            email: true,
+            image: true,
+          },
+        },
+      },
+    });
+    return updatedAccount;
+  }
+
+  async delete(id: string): Promise<void> {
+    await this.prisma.account.delete({
+      where: { id },
+    });
+  }
 }

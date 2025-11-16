@@ -21,7 +21,7 @@ export class AccountRequest {
   @IsOptional()
   accountNumber: string;
 
-  public toModel(userId: string): Prisma.AccountCreateInput {
+  public toModel(userId?: string): Prisma.AccountCreateInput {
     return {
       name: this.name,
       accountType: this.accountType,
