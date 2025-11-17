@@ -14,4 +14,7 @@ export enum ResponseMessage {
 
   CREATE_EXPENSE_SUCCESS = '지출내역이 성공적으로 생성되었습니다.',
   CREATE_INCOME_SUCCESS = '수입내역이 성공적으로 생성되었습니다.',
+  UPDATE_EXPENSE_SUCCESS = '지출내역이 성공적으로 수정되었습니다.',
+  UPDATE_INCOME_SUCCESS = '수입내역이 성공적으로 수정되었습니다.',
+  DELETE_TRANSACTION_SUCCESS = '거래내역이 성공적으로 삭제되었습니다.',
 }

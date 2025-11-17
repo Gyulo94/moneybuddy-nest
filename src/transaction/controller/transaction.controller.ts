@@ -1,6 +1,7 @@
 import {
   Body,
   Controller,
+  Delete,
   Get,
   Logger,
   Param,
@@ -105,6 +106,7 @@ export class TransactionController {
   }
 
   @Put('income/update/:id')
+  @Message(ResponseMessage.UPDATE_INCOME_SUCCESS)
   public async updateIncome(
     @Param('id') id: string,
     @Body() request: IncomeRequest,
@@ -127,6 +129,7 @@ export class TransactionController {
   }
 
   @Put('expense/update/:id')
+  @Message(ResponseMessage.UPDATE_EXPENSE_SUCCESS)
   public async updateExpense(
     @Param('id') id: string,
     @Body() request: ExpenseRequest,
@@ -145,11 +148,20 @@ export class TransactionController {
     return response;
   }
 
-  //   @PutMapping("expense/{id}/update")
-  // public Api<ExpenseResponse> updateExpense(@PathVariable("id") UUID id,
-  //     @Valid @RequestBody ExpenseRequest request,
-  //     @CurrentUser JwtPayload user) {
-  //   ExpenseResponse response = transactionService.updateExpense(id, request, user.getId());
-  //   return Api.OK(response, ResponseMessage.UPDATE_EXPENSE_SUCCESS);
-  // }
+  @Delete('delete')
+  @Message(ResponseMessage.DELETE_TRANSACTION_SUCCESS)
+  public async deleteTransactions(
+    @Body('transactionIds') transactionIds: string[],
+    @CurrentUser() user: Payload,
+  ): Promise<void> {
+    this.LOGGER.log(
+      `--------------------거래 내역 삭제 컨트롤러 실행--------------------`,
+    );
+    this.LOGGER.log(`거래 내역 삭제 요청 받음`);
+    await this.transactionService.deleteTransactions(transactionIds, user.id);
+    this.LOGGER.log(`거래 내역 삭제 완료`);
+    this.LOGGER.log(
+      `--------------------거래 내역 삭제 컨트롤러 종료--------------------`,
+    );
+  }
 }

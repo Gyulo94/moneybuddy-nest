@@ -74,4 +74,10 @@ export class TransactionRepository {
     });
     return updatedTransaction;
   }
+
+  async deleteMany(ids: string[], userId: string): Promise<void> {
+    await this.prisma.transaction.deleteMany({
+      where: { id: { in: ids }, userId },
+    });
+  }
 }

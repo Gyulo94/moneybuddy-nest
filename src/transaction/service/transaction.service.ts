@@ -158,6 +158,7 @@ export class TransactionService {
     return response;
   }
 
+  @Transactional()
   async updateIncome(
     id: string,
     request: IncomeRequest,
@@ -182,6 +183,7 @@ export class TransactionService {
     return response;
   }
 
+  @Transactional()
   async updateExpense(
     id: string,
     request: ExpenseRequest,
@@ -204,5 +206,20 @@ export class TransactionService {
       `--------------------지출 수정 서비스 종료--------------------`,
     );
     return response;
+  }
+
+  async deleteTransactions(
+    transactionIds: string[],
+    userId: string,
+  ): Promise<void> {
+    this.LOGGER.log(
+      `--------------------거래 내역 삭제 서비스 실행--------------------`,
+    );
+    this.LOGGER.log(`1. 거래 내역 삭제 시작`);
+    await this.transactionRepository.deleteMany(transactionIds, userId);
+    this.LOGGER.log(`2. 거래 내역 삭제 완료`);
+    this.LOGGER.log(
+      `--------------------거래 내역 삭제 서비스 종료--------------------`,
+    );
   }
 }
