@@ -6,31 +6,31 @@ import { PaymentMethodResponse } from 'src/payment-method/response/payment-metho
 import { SubCategoryResponse } from 'src/subCategory/response/sub-category.response';
 import { TagResponse } from 'src/tag/controller/response/tag.response';
 
-export class ExpenseResponse {
+export class TransactionDetailResponse {
   id: string;
   amount: number;
   type: TransactionType;
-  category?: CategoryResponse;
-  subCategory?: SubCategoryResponse;
   method: MethodType;
+  memo?: string;
   description?: string;
   transactionAt: Date;
   account?: AccountResponse;
   paymentMethod?: PaymentMethodResponse;
-  date: string;
-  memo?: string;
+  tags?: TagResponse[];
   time: string;
-  tags: TagResponse[];
+  date: string;
+  category?: CategoryResponse;
+  subCategory?: SubCategoryResponse;
 
   static fromModel(
     entity: Transaction & {
+      Category?: CategoryResponse;
       Account?: AccountResponse;
       PaymentMethod?: PaymentMethodResponse;
-      tags?: TagResponse[];
-      Category?: CategoryResponse;
       SubCategory?: SubCategoryResponse;
+      tags?: TagResponse[];
     },
-  ): ExpenseResponse {
+  ): TransactionDetailResponse {
     const {
       id,
       amount,
@@ -62,6 +62,6 @@ export class ExpenseResponse {
       tags,
       category,
       subCategory,
-    } as ExpenseResponse;
+    } as TransactionDetailResponse;
   }
 }

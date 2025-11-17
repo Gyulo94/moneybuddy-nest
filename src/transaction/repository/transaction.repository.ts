@@ -18,4 +18,28 @@ export class TransactionRepository {
     });
     return newTransaction;
   }
+
+  async findMonthlyTransactionsWithDetails(
+    userId: string,
+    startDateTime: Date,
+    endDateTime: Date,
+  ): Promise<Transaction[]> {
+    const transactions = await this.prisma.transaction.findMany({
+      where: {
+        userId,
+        createdAt: {
+          gte: startDateTime,
+          lte: endDateTime,
+        },
+      },
+      include: {
+        Account: true,
+        PaymentMethod: true,
+        tags: true,
+        Category: true,
+        SubCategory: true,
+      },
+    });
+    return transactions;
+  }
 }

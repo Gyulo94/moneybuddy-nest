@@ -29,6 +29,8 @@ export enum ErrorCode {
   INTERNAL_SERVER_ERROR = 'SERVER_001',
   BAD_REQUEST = 'COMMON_001',
   FORBIDDEN = 'COMMON_002',
+  DATE_NULL_OR_EMPTY = 'COMMON_003',
+  INVALID_DATE_OR_TIME_FORMAT = 'COMMON_004',
 }
 
 export const ErrorCodeMap: Record<
@@ -120,5 +122,13 @@ export const ErrorCodeMap: Record<
   [ErrorCode.FORBIDDEN]: {
     status: HttpStatus.FORBIDDEN,
     message: '잘못된 접근입니다.',
+  },
+  [ErrorCode.DATE_NULL_OR_EMPTY]: {
+    status: HttpStatus.BAD_REQUEST,
+    message: '날짜 값이 null이거나 비어 있습니다.',
+  },
+  [ErrorCode.INVALID_DATE_OR_TIME_FORMAT]: {
+    status: HttpStatus.BAD_REQUEST,
+    message: '날짜 또는 시간 형식이 올바르지 않습니다.',
   },
 };
