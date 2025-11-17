@@ -42,4 +42,18 @@ export class TransactionRepository {
     });
     return transactions;
   }
+
+  async findById(id: string): Promise<Transaction> {
+    const transaction = await this.prisma.transaction.findFirst({
+      where: { id },
+      include: {
+        Account: true,
+        PaymentMethod: true,
+        tags: true,
+        Category: true,
+        SubCategory: true,
+      },
+    });
+    return transaction;
+  }
 }

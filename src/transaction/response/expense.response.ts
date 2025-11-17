@@ -3,7 +3,7 @@ import { AccountResponse } from 'src/account/response/account.response';
 import { CategoryResponse } from 'src/category/response/category.response';
 import { FromDateTimeToString } from 'src/global/utils/date-time.utils';
 import { PaymentMethodResponse } from 'src/payment-method/response/payment-method.response';
-import { SubCategoryResponse } from 'src/subCategory/response/sub-category.response';
+import { SubCategoryResponse } from 'src/sub-category/response/sub-category.response';
 import { TagResponse } from 'src/tag/controller/response/tag.response';
 
 export class ExpenseResponse {

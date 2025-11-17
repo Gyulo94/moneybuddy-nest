@@ -15,6 +15,7 @@ import { IncomeRequest } from '../request/income.request';
 import { ExpenseResponse } from '../response/expense.response';
 import { IncomeResponse } from '../response/income.response';
 import { TransactionByDateResponse } from '../response/trabsaction-by-date.response';
+import { TransactionDetailResponse } from '../response/transaction-detail.response';
 
 @Injectable()
 export class TransactionService {
@@ -139,5 +140,21 @@ export class TransactionService {
       `--------------------월별 거래 내역 조회 서비스 종료--------------------`,
     );
     return result;
+  }
+
+  async findById(id: string): Promise<TransactionDetailResponse> {
+    this.LOGGER.log(
+      `--------------------거래 내역 상세 조회 서비스 실행--------------------`,
+    );
+    this.LOGGER.log(`1. 거래 내역 상세 조회 시작`);
+    const transaction: Transaction =
+      await this.transactionRepository.findById(id);
+    this.LOGGER.log(`2. 거래 내역 상세 조회 완료`);
+    const response = TransactionDetailResponse.fromModel(transaction);
+    this.LOGGER.log(`3. 거래 내역 상세 응답 생성 완료`);
+    this.LOGGER.log(
+      `--------------------거래 내역 상세 조회 서비스 종료--------------------`,
+    );
+    return response;
   }
 }
