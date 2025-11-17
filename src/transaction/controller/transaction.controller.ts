@@ -5,6 +5,7 @@ import {
   Logger,
   Param,
   Post,
+  Put,
   Query,
 } from '@nestjs/common';
 import { CurrentUser } from 'src/global/decorator/current-user.decorator';
@@ -102,4 +103,53 @@ export class TransactionController {
     );
     return response;
   }
+
+  @Put('income/update/:id')
+  public async updateIncome(
+    @Param('id') id: string,
+    @Body() request: IncomeRequest,
+    @CurrentUser() user: Payload,
+  ): Promise<IncomeResponse> {
+    this.LOGGER.log(
+      `--------------------수입 수정 컨트롤러 실행--------------------`,
+    );
+    this.LOGGER.log(`수입 수정 요청 받음`);
+    const response: IncomeResponse = await this.transactionService.updateIncome(
+      id,
+      request,
+      user.id,
+    );
+    this.LOGGER.log(`수입 수정 완료`);
+    this.LOGGER.log(
+      `--------------------수입 수정 컨트롤러 종료--------------------`,
+    );
+    return response;
+  }
+
+  @Put('expense/update/:id')
+  public async updateExpense(
+    @Param('id') id: string,
+    @Body() request: ExpenseRequest,
+    @CurrentUser() user: Payload,
+  ): Promise<ExpenseResponse> {
+    this.LOGGER.log(
+      `--------------------지출 수정 컨트롤러 실행--------------------`,
+    );
+    this.LOGGER.log(`지출 수정 요청 받음`);
+    const response: ExpenseResponse =
+      await this.transactionService.updateExpense(id, request, user.id);
+    this.LOGGER.log(`지출 수정 완료`);
+    this.LOGGER.log(
+      `--------------------지출 수정 컨트롤러 종료--------------------`,
+    );
+    return response;
+  }
+
+  //   @PutMapping("expense/{id}/update")
+  // public Api<ExpenseResponse> updateExpense(@PathVariable("id") UUID id,
+  //     @Valid @RequestBody ExpenseRequest request,
+  //     @CurrentUser JwtPayload user) {
+  //   ExpenseResponse response = transactionService.updateExpense(id, request, user.getId());
+  //   return Api.OK(response, ResponseMessage.UPDATE_EXPENSE_SUCCESS);
+  // }
 }

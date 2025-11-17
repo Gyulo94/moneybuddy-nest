@@ -157,4 +157,52 @@ export class TransactionService {
     );
     return response;
   }
+
+  async updateIncome(
+    id: string,
+    request: IncomeRequest,
+    userId: string,
+  ): Promise<IncomeResponse> {
+    this.LOGGER.log(
+      `--------------------수입 수정 서비스 실행--------------------`,
+    );
+    this.LOGGER.log(`1. 태그 저장 시작`);
+    const newTags: Tag[] = await this.tagService.saveTags(request.tags, userId);
+    this.LOGGER.log(`2. 태그 저장 완료`);
+    this.LOGGER.log(`3. 수입 수정 시작`);
+    const updatedIncome: Transaction = await this.transactionRepository.update(
+      id,
+      request.toModel(newTags, userId),
+    );
+    this.LOGGER.log(`4. 수입 수정 완료`);
+    const response = IncomeResponse.fromModel(updatedIncome);
+    this.LOGGER.log(
+      `--------------------수입 수정 서비스 종료--------------------`,
+    );
+    return response;
+  }
+
+  async updateExpense(
+    id: string,
+    request: ExpenseRequest,
+    userId: string,
+  ): Promise<ExpenseResponse> {
+    this.LOGGER.log(
+      `--------------------지출 수정 서비스 실행--------------------`,
+    );
+    this.LOGGER.log(`1. 태그 저장 시작`);
+    const newTags: Tag[] = await this.tagService.saveTags(request.tags, userId);
+    this.LOGGER.log(`2. 태그 저장 완료`);
+    this.LOGGER.log(`3. 지출 수정 시작`);
+    const updatedExpense: Transaction = await this.transactionRepository.update(
+      id,
+      request.toModel(newTags, userId),
+    );
+    this.LOGGER.log(`4. 지출 수정 완료`);
+    const response = ExpenseResponse.fromModel(updatedExpense);
+    this.LOGGER.log(
+      `--------------------지출 수정 서비스 종료--------------------`,
+    );
+    return response;
+  }
 }

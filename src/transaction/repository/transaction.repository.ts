@@ -56,4 +56,22 @@ export class TransactionRepository {
     });
     return transaction;
   }
+
+  async update(
+    id: string,
+    data: Prisma.TransactionUpdateInput,
+  ): Promise<Transaction> {
+    const updatedTransaction = await this.prisma.transaction.update({
+      where: { id },
+      data,
+      include: {
+        Account: true,
+        PaymentMethod: true,
+        tags: true,
+        Category: true,
+        SubCategory: true,
+      },
+    });
+    return updatedTransaction;
+  }
 }
