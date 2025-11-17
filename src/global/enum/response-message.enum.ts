@@ -7,4 +7,8 @@ export enum ResponseMessage {
   CREATE_ACCOUNT_SUCCESS = '계좌가 성공적으로 생성되었습니다.',
   UPDATE_ACCOUNT_SUCCESS = '계좌가 성공적으로 수정되었습니다.',
   DELETE_ACCOUNT_SUCCESS = '계좌가 성공적으로 삭제되었습니다.',
+
+  CREATE_PAYMENT_METHOD_SUCCESS = '결제 수단이 성공적으로 생성되었습니다.',
+  UPDATE_PAYMENT_METHOD_SUCCESS = '결제 수단이 성공적으로 수정되었습니다.',
+  DELETE_PAYMENT_METHOD_SUCCESS = '결제 수단이 성공적으로 삭제되었습니다.',
 }

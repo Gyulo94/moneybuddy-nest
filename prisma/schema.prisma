@@ -26,7 +26,7 @@ model User {
 model Account {
   id             String          @id @default(dbgenerated("gen_random_uuid()")) @db.Uuid
   accountNumber  String?         @db.VarChar(4)
-  accountType    String
+  accountType    AccountType
   currentBalance Int
   initialBalance Int
   name           String
@@ -83,7 +83,7 @@ model PaymentMethod {
   id          String        @id @default(dbgenerated("gen_random_uuid()")) @db.Uuid
   cardNumber  String?
   logo        String?
-  methodType  String
+  methodType  MethodType
   name        String?
   accountId   String?       @db.Uuid
   userId      String        @db.Uuid
@@ -150,6 +150,16 @@ model Transaction {
   @@index([type])
   @@index([userId])
   @@index([userId, transactionAt])
+}
+
+enum MethodType {
+  신용
+  체크
+}
+
+enum AccountType {
+  현금
+  계좌
 }
 
 enum Provider {

@@ -13,6 +13,7 @@ import { BankModule } from './bank/bank.module';
 import { GlobalModule } from './global/global.module';
 import { RequestMiddleware } from './global/utils/logger.middleware';
 import { UserModule } from './user/user.module';
+import { PaymentMethodModule } from './payment-method/payment-method.module';
 
 @Module({
   imports: [
@@ -22,6 +23,7 @@ import { UserModule } from './user/user.module';
     UserModule,
     BankModule,
     AccountModule,
+    PaymentMethodModule,
   ],
   controllers: [],
   providers: [
