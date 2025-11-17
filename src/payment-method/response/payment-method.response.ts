@@ -1,4 +1,4 @@
-import { MethodType, PaymentMethod } from '@prisma/client';
+import { PaymentMethod, PaymentMethodType } from '@prisma/client';
 import { AccountResponse } from 'src/account/response/account.response';
 import { IssuerResponse } from 'src/issuer/response/Issuer.response';
 import { UserResponse } from 'src/user/response/user.response';
@@ -6,7 +6,7 @@ import { UserResponse } from 'src/user/response/user.response';
 export class PaymentMethodResponse {
   id: string;
   name: string;
-  methodType: MethodType;
+  methodType: PaymentMethodType;
   issuer?: IssuerResponse;
   account?: AccountResponse;
   user?: UserResponse;

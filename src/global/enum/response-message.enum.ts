@@ -11,4 +11,7 @@ export enum ResponseMessage {
   CREATE_PAYMENT_METHOD_SUCCESS = '결제 수단이 성공적으로 생성되었습니다.',
   UPDATE_PAYMENT_METHOD_SUCCESS = '결제 수단이 성공적으로 수정되었습니다.',
   DELETE_PAYMENT_METHOD_SUCCESS = '결제 수단이 성공적으로 삭제되었습니다.',
+
+  CREATE_EXPENSE_SUCCESS = '지출내역이 성공적으로 생성되었습니다.',
+  CREATE_INCOME_SUCCESS = '수입내역이 성공적으로 생성되었습니다.',
 }

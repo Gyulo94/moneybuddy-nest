@@ -1,12 +1,12 @@
-import { MethodType, Prisma } from '@prisma/client';
+import { PaymentMethodType, Prisma } from '@prisma/client';
 import { IsEnum, IsOptional, IsString } from 'class-validator';
 
 export class PaymentMethodRequest {
   @IsString()
   name: string;
 
-  @IsEnum(MethodType)
-  methodType: MethodType;
+  @IsEnum(PaymentMethodType)
+  methodType: PaymentMethodType;
 
   @IsString()
   issuerId: string;

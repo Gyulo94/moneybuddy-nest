@@ -14,6 +14,8 @@ import { GlobalModule } from './global/global.module';
 import { RequestMiddleware } from './global/utils/logger.middleware';
 import { UserModule } from './user/user.module';
 import { PaymentMethodModule } from './payment-method/payment-method.module';
+import { TagModule } from './tag/tag.module';
+import { TransactionModule } from './transaction/transaction.module';
 
 @Module({
   imports: [
@@ -24,6 +26,8 @@ import { PaymentMethodModule } from './payment-method/payment-method.module';
     BankModule,
     AccountModule,
     PaymentMethodModule,
+    TagModule,
+    TransactionModule,
   ],
   controllers: [],
   providers: [

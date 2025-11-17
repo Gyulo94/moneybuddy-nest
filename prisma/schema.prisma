@@ -80,19 +80,19 @@ model Issuer {
 }
 
 model PaymentMethod {
-  id          String        @id @default(dbgenerated("gen_random_uuid()")) @db.Uuid
+  id          String            @id @default(dbgenerated("gen_random_uuid()")) @db.Uuid
   cardNumber  String?
   logo        String?
-  methodType  MethodType
+  methodType  PaymentMethodType
   name        String?
-  accountId   String?       @db.Uuid
-  userId      String        @db.Uuid
-  issuerId    String?       @db.Uuid
-  createdAt   DateTime      @default(now())
-  updatedAt   DateTime      @updatedAt
-  Account     Account?      @relation(fields: [accountId], references: [id])
-  Issuer      Issuer?       @relation(fields: [issuerId], references: [id])
-  User        User          @relation(fields: [userId], references: [id])
+  accountId   String?           @db.Uuid
+  userId      String            @db.Uuid
+  issuerId    String?           @db.Uuid
+  createdAt   DateTime          @default(now())
+  updatedAt   DateTime          @updatedAt
+  Account     Account?          @relation(fields: [accountId], references: [id])
+  Issuer      Issuer?           @relation(fields: [issuerId], references: [id])
+  User        User              @relation(fields: [userId], references: [id])
   Transaction Transaction[]
 
   @@index([accountId])
@@ -121,25 +121,25 @@ model Tag {
 }
 
 model Transaction {
-  id              String         @id @default(dbgenerated("gen_random_uuid()")) @db.Uuid
+  id              String          @id @default(dbgenerated("gen_random_uuid()")) @db.Uuid
   amount          Int
-  createdAt       DateTime       @default(now())
+  createdAt       DateTime        @default(now())
   description     String?
   memo            String?
-  method          String?
-  transactionAt   DateTime       @db.Timestamp(6)
-  type            Int            @db.SmallInt
-  updatedAt       DateTime
-  accountId       String         @db.Uuid
-  categoryId      String         @db.Uuid
-  paymentMethodId String?        @db.Uuid
-  subCategoryId   String?        @db.Uuid
-  userId          String         @db.Uuid
-  Account         Account        @relation(fields: [accountId], references: [id])
-  Category        Category       @relation(fields: [categoryId], references: [id])
-  PaymentMethod   PaymentMethod? @relation(fields: [paymentMethodId], references: [id])
-  SubCategory     SubCategory?   @relation(fields: [subCategoryId], references: [id])
-  User            User           @relation(fields: [userId], references: [id])
+  method          MethodType
+  transactionAt   DateTime        @db.Timestamp(6)
+  type            TransactionType
+  updatedAt       DateTime        @updatedAt
+  accountId       String          @db.Uuid
+  categoryId      String          @db.Uuid
+  paymentMethodId String?         @db.Uuid
+  subCategoryId   String?         @db.Uuid
+  userId          String          @db.Uuid
+  Account         Account         @relation(fields: [accountId], references: [id])
+  Category        Category        @relation(fields: [categoryId], references: [id])
+  PaymentMethod   PaymentMethod?  @relation(fields: [paymentMethodId], references: [id])
+  SubCategory     SubCategory?    @relation(fields: [subCategoryId], references: [id])
+  User            User            @relation(fields: [userId], references: [id])
   tags            Tag[]
   images          Image[]
 
@@ -152,9 +152,19 @@ model Transaction {
   @@index([userId, transactionAt])
 }
 
-enum MethodType {
+enum TransactionType {
+  INCOME
+  EXPENSE
+}
+
+enum PaymentMethodType {
   신용
   체크
+}
+
+enum MethodType {
+  CARD
+  ACCOUNT
 }
 
 enum AccountType {
