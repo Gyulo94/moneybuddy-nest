@@ -1,7 +1,6 @@
 import { Injectable } from '@nestjs/common';
 import { Account, Prisma } from '@prisma/client';
 import { PrismaService } from 'src/global/prisma/prisma.service';
-import { AccountResponse } from '../response/account.response';
 
 @Injectable()
 export class AccountRepository {
@@ -31,16 +30,10 @@ export class AccountRepository {
     return newAccount;
   }
 
-  async findAllByUserId(userId: string): Promise<AccountResponse[]> {
+  async findAllByUserId(userId: string): Promise<Account[]> {
     const accounts = await this.prisma.account.findMany({
       where: { userId },
-      select: {
-        id: true,
-        name: true,
-        accountType: true,
-        currentBalance: true,
-        initialBalance: true,
-        accountNumber: true,
+      include: {
         Bank: {
           select: {
             id: true,
@@ -53,9 +46,7 @@ export class AccountRepository {
             id: true,
             name: true,
             email: true,
-            provider: true,
-            createdAt: true,
-            updatedAt: true,
+            image: true,
           },
         },
       },

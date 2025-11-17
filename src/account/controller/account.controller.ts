@@ -3,6 +3,7 @@ import {
   Controller,
   Delete,
   Get,
+  Logger,
   Param,
   Post,
   Put,
@@ -17,6 +18,7 @@ import { AccountService } from '../service/account.service';
 
 @Controller('account')
 export class AccountController {
+  private readonly LOGGER = new Logger(AccountController.name);
   constructor(private readonly accountService: AccountService) {}
 
   @Post('create')
@@ -25,9 +27,17 @@ export class AccountController {
     @Body() request: AccountRequest,
     @CurrentUser() user: Payload,
   ): Promise<AccountResponse> {
+    this.LOGGER.log(
+      `--------------------계좌 생성 컨트롤러 실행--------------------`,
+    );
+    this.LOGGER.log(`계좌 생성 요청 받음`);
     const response: AccountResponse = await this.accountService.createAccount(
       request,
       user.id,
+    );
+    this.LOGGER.log(`계좌 생성 완료`);
+    this.LOGGER.log(
+      `--------------------계좌 생성 컨트롤러 종료--------------------`,
     );
     return response;
   }
@@ -36,8 +46,16 @@ export class AccountController {
   async findAccountsById(
     @CurrentUser() user: Payload,
   ): Promise<AccountResponse[]> {
+    this.LOGGER.log(
+      `--------------------계좌 조회 컨트롤러 실행--------------------`,
+    );
+    this.LOGGER.log(`계좌 조회 요청 받음`);
     const response: AccountResponse[] =
       await this.accountService.findAccountsByUserId(user.id);
+    this.LOGGER.log(`계좌 조회 완료`);
+    this.LOGGER.log(
+      `--------------------계좌 조회 컨트롤러 종료--------------------`,
+    );
     return response;
   }
 
@@ -48,10 +66,18 @@ export class AccountController {
     @Body() request: AccountRequest,
     @CurrentUser() user: Payload,
   ): Promise<AccountResponse> {
+    this.LOGGER.log(
+      `--------------------계좌 수정 컨트롤러 실행--------------------`,
+    );
+    this.LOGGER.log(`계좌 수정 요청 받음`);
     const response: AccountResponse = await this.accountService.updateAccount(
       request,
       id,
       user.id,
+    );
+    this.LOGGER.log(`계좌 수정 완료`);
+    this.LOGGER.log(
+      `--------------------계좌 수정 컨트롤러 종료--------------------`,
     );
     return response;
   }
@@ -59,6 +85,14 @@ export class AccountController {
   @Delete('delete/:id')
   @Message(ResponseMessage.DELETE_ACCOUNT_SUCCESS)
   async deleteAccount(@Param('id') id: string): Promise<void> {
+    this.LOGGER.log(
+      `--------------------계좌 삭제 컨트롤러 실행--------------------`,
+    );
+    this.LOGGER.log(`계좌 삭제 요청 받음`);
     await this.accountService.deleteAccount(id);
+    this.LOGGER.log(`계좌 삭제 완료`);
+    this.LOGGER.log(
+      `--------------------계좌 삭제 컨트롤러 종료--------------------`,
+    );
   }
 }

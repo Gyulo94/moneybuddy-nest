@@ -22,8 +22,8 @@ export class AccountResponse {
       initialBalance,
       currentBalance,
       accountNumber,
-      Bank,
-      User,
+      Bank: bank,
+      User: user,
     } = entity;
     return {
       id,
@@ -32,8 +32,8 @@ export class AccountResponse {
       initialBalance,
       currentBalance,
       accountNumber,
-      Bank,
-      User,
+      bank,
+      user,
     } as AccountResponse;
   }
 }

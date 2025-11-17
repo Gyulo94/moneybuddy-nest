@@ -1,18 +1,16 @@
-import { Prisma } from '@prisma/client';
-import { IsNumber, IsOptional, IsString } from 'class-validator';
+import { AccountType, Prisma } from '@prisma/client';
+import { IsNumber, IsOptional, IsString, Min } from 'class-validator';
 
 export class AccountRequest {
   @IsString()
   name: string;
 
   @IsString()
-  accountType: string;
+  accountType: AccountType;
 
   @IsNumber()
+  @Min(0)
   initialBalance: number;
-
-  @IsNumber()
-  currentBalance: number;
 
   @IsString()
   bankId: string;
@@ -26,7 +24,7 @@ export class AccountRequest {
       name: this.name,
       accountType: this.accountType,
       initialBalance: this.initialBalance,
-      currentBalance: this.currentBalance,
+      currentBalance: this.initialBalance,
       accountNumber: this.accountNumber,
       Bank: { connect: { id: this.bankId } },
       User: { connect: { id: userId } },
