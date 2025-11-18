@@ -17,6 +17,9 @@ export enum ErrorCode {
   ACCOUNT_NOT_FOUND = 'ACCOUNT_001',
   CREATE_ACCOUNT_FAILED = 'ACCOUNT_002',
 
+  // 예산 관련 에러
+  BUDGET_NOT_FOUND = 'BUDGET_001',
+
   // 사용자 관련 에러
   USER_NOT_FOUND = 'USER_001',
   DUPLICATE_EMAIL = 'USER_002',
@@ -90,6 +93,12 @@ export const ErrorCodeMap: Record<
   [ErrorCode.CREATE_ACCOUNT_FAILED]: {
     status: HttpStatus.INTERNAL_SERVER_ERROR,
     message: '계좌 생성에 실패했습니다.',
+  },
+
+  // 예산 관련
+  [ErrorCode.BUDGET_NOT_FOUND]: {
+    status: HttpStatus.NOT_FOUND,
+    message: '해당 예산을 찾을 수 없습니다.',
   },
 
   // 사용자 관련

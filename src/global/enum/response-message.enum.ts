@@ -17,4 +17,5 @@ export enum ResponseMessage {
   UPDATE_EXPENSE_SUCCESS = '지출내역이 성공적으로 수정되었습니다.',
   UPDATE_INCOME_SUCCESS = '수입내역이 성공적으로 수정되었습니다.',
   DELETE_TRANSACTION_SUCCESS = '거래내역이 성공적으로 삭제되었습니다.',
+  CREATE_BUDGET_SUCCESS = '월 예산이 성공적으로 등록되었습니다.',
 }

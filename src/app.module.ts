@@ -16,6 +16,7 @@ import { UserModule } from './user/user.module';
 import { PaymentMethodModule } from './payment-method/payment-method.module';
 import { TagModule } from './tag/tag.module';
 import { TransactionModule } from './transaction/transaction.module';
+import { BudgetModule } from './budget/budget.module';
 
 @Module({
   imports: [
@@ -28,6 +29,7 @@ import { TransactionModule } from './transaction/transaction.module';
     PaymentMethodModule,
     TagModule,
     TransactionModule,
+    BudgetModule,
   ],
   controllers: [],
   providers: [
