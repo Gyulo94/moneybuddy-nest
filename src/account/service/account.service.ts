@@ -1,6 +1,7 @@
 import { Injectable, Logger } from '@nestjs/common';
 import { OnEvent } from '@nestjs/event-emitter';
 import { Account, AccountType, Prisma } from '@prisma/client';
+import { Transactional } from 'src/global/decorator/transactional.decorator';
 import { ErrorCode } from 'src/global/enum/error-code.enum';
 import { UserSignupEvent } from 'src/global/event/user-signup.event';
 import { ApiException } from 'src/global/exception/api.exception';
@@ -115,5 +116,22 @@ export class AccountService {
     this.LOGGER.log(
       `--------------------계좌 삭제 서비스 종료--------------------`,
     );
+  }
+
+  @Transactional()
+  async updateBalance(
+    accountId: string,
+    changeAmount: number,
+    userId: string,
+  ): Promise<void> {
+    const account = await this.accountRepository.findById(accountId);
+
+    if (!account || account.userId !== userId) {
+      throw new ApiException(ErrorCode.ACCOUNT_NOT_FOUND);
+    }
+
+    const newBalance = account.currentBalance + changeAmount;
+
+    await this.accountRepository.updateBalance(accountId, newBalance);
   }
 }

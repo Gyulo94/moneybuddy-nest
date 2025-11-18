@@ -108,4 +108,11 @@ export class AccountRepository {
       where: { id },
     });
   }
+
+  async updateBalance(accountId: string, newBalance: number): Promise<void> {
+    await this.prisma.account.update({
+      where: { id: accountId },
+      data: { currentBalance: newBalance },
+    });
+  }
 }

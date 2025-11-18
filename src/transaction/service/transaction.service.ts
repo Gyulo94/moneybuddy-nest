@@ -1,6 +1,7 @@
 import { Injectable, Logger } from '@nestjs/common';
 import { Tag, Transaction } from '@prisma/client';
 import { format } from 'date-fns';
+import { AccountService } from 'src/account/service/account.service';
 import { Transactional } from 'src/global/decorator/transactional.decorator';
 import {
   extractYearMonth,
@@ -24,6 +25,7 @@ export class TransactionService {
     private readonly transactionRepository: TransactionRepository,
     private readonly userService: UserService,
     private readonly tagService: TagService,
+    private readonly accountService: AccountService,
   ) {}
 
   @Transactional()
@@ -42,11 +44,19 @@ export class TransactionService {
     const newTags: Tag[] = await this.tagService.saveTags(request.tags, userId);
     this.LOGGER.log(`4. 태그 저장 완료`);
 
-    this.LOGGER.log(`5. 지출 생성 시작`);
+    this.LOGGER.log(`5. 계좌 잔액 업데이트 시작`);
+    await this.accountService.updateBalance(
+      request.accountId,
+      -request.amount,
+      userId,
+    );
+    this.LOGGER.log(`6. 계좌 잔액 업데이트 완료`);
+
+    this.LOGGER.log(`7. 지출 생성 시작`);
     const newExpense: Transaction = await this.transactionRepository.create(
       request.toModel(newTags, userId),
     );
-    this.LOGGER.log(`6. 지출 생성 완료`);
+    this.LOGGER.log(`8. 지출 생성 완료`);
     const response = ExpenseResponse.fromModel(newExpense);
     this.LOGGER.log(
       `--------------------지출 생성 서비스 종료--------------------`,
@@ -68,11 +78,20 @@ export class TransactionService {
     this.LOGGER.log(`3. 태그 저장 시작`);
     const newTags: Tag[] = await this.tagService.saveTags(request.tags, userId);
     this.LOGGER.log(`4. 태그 저장 완료`);
-    this.LOGGER.log(`5. 수입 생성 시작`);
+
+    this.LOGGER.log(`5. 계좌 잔액 업데이트 시작`);
+    await this.accountService.updateBalance(
+      request.accountId,
+      request.amount,
+      userId,
+    );
+    this.LOGGER.log(`6. 계좌 잔액 업데이트 완료`);
+
+    this.LOGGER.log(`7. 수입 생성 시작`);
     const newIncome: Transaction = await this.transactionRepository.create(
       request.toModel(newTags, userId),
     );
-    this.LOGGER.log(`6. 수입 생성 완료`);
+    this.LOGGER.log(`8. 수입 생성 완료`);
     const response = IncomeResponse.fromModel(newIncome);
     this.LOGGER.log(
       `--------------------수입 생성 서비스 종료--------------------`,

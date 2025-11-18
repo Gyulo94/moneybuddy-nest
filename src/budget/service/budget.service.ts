@@ -1,5 +1,6 @@
 import { Injectable, Logger } from '@nestjs/common';
 import { Budget } from '@prisma/client';
+import { Transactional } from 'src/global/decorator/transactional.decorator';
 import { ErrorCode } from 'src/global/enum/error-code.enum';
 import { ApiException } from 'src/global/exception/api.exception';
 import { BudgetRepository } from '../repository/budget.repository';
@@ -11,6 +12,7 @@ export class BudgetService {
   private readonly LOGGER = new Logger(BudgetService.name);
   constructor(private readonly budgetRepository: BudgetRepository) {}
 
+  @Transactional()
   async createBudget(
     request: BudgetRequest,
     userId: string,
