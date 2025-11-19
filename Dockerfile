@@ -19,8 +19,6 @@ WORKDIR /app
 COPY --from=builder /app/node_modules ./node_modules
 COPY --from=builder /app/dist ./dist
 
-COPY .env ./.env
-
 EXPOSE 8000
 
 CMD ["node", "dist/main"]
