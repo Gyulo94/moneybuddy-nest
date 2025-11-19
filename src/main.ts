@@ -1,3 +1,5 @@
+console.log('[VERY_EARLY_DEBUG] Main TS file loaded and starting bootstrap');
+
 import { ValidationPipe } from '@nestjs/common';
 import { NestFactory, Reflector } from '@nestjs/core';
 import { AppModule } from './app.module';
@@ -23,6 +25,12 @@ async function bootstrap() {
   const reflector = app.get(Reflector);
   app.useGlobalFilters(new HttpExceptionFilter(logger));
   app.useGlobalInterceptors(new ApiInterceptor(reflector));
-  await app.listen(process.env.PORT ? parseInt(process.env.PORT, 10) : 8000);
+  console.log(`[MY_DEBUG] Raw process.env.PORT: ${process.env.PORT}`);
+  const portToListen = process.env.PORT ? parseInt(process.env.PORT, 10) : 8000;
+  console.log(`[MY_DEBUG] Parsed port to listen: ${portToListen}`);
+  await app.listen(portToListen);
+  console.log(
+    `[MY_DEBUG] Nest application successfully started on port ${portToListen}`,
+  );
 }
 bootstrap();
