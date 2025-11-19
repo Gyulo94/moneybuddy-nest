@@ -3,15 +3,14 @@ console.log('[VERY_EARLY_DEBUG] Main TS file loaded and starting bootstrap');
 import { ValidationPipe } from '@nestjs/common';
 import { NestFactory } from '@nestjs/core';
 import { AppModule } from './app.module';
-import { winstonLogger } from './global/utils/winston.config';
 
 async function bootstrap() {
   const app = await NestFactory.create(AppModule, {
     abortOnError: false,
   });
-  const logger = winstonLogger;
+  // const logger = winstonLogger;
   app.setGlobalPrefix('api');
-  app.useLogger(logger);
+  // app.useLogger(logger);
   app.useGlobalPipes(
     new ValidationPipe({
       whitelist: true,
