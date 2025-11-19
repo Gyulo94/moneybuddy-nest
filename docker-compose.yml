@@ -1,0 +1,65 @@
+version: '3.8'
+
+services:
+  moneybuddy-server:
+    TZ: Asia/Seoul
+    build: .
+    image: ${DOCKER_USERNAME}/moneybuddy-server
+    restart: always
+    env_file:
+      - .env
+    environment:
+      - DATABASE_URL=${DATABASE_URL}
+      - NODE_ENV=${NODE_ENV}
+      - REDIS_HOST=${REDIS_HOST}
+      - REDIS_PORT=${REDIS_PORT}
+      - DOCKER_USERNAME=${DOCKER_USERNAME}
+    ports:
+      - '8000:8000'
+    depends_on:
+      - moneybuddy-db
+      - moneybuddy-redis
+    networks:
+      - nginx-proxy_gyubuntu_net
+
+  moneybuddy-db:
+    image: postgres:16.8
+    restart: always
+    environment:
+      POSTGRES_DB: ${POSTGRES_DB}
+      POSTGRES_USER: ${POSTGRES_USER}
+      POSTGRES_PASSWORD: ${POSTGRES_PASSWORD}
+    ports:
+      - '5433:5432'
+    volumes:
+      - db_data:/var/lib/postgresql/data
+    env_file:
+      - .env
+    networks:
+      - nginx-proxy_gyubuntu_net
+
+  moneybuddy-redis:
+    image: redis:latest
+    restart: always
+    # ports:
+    #   - '6379:6379'
+    command: redis-server --appendonly yes
+    volumes:
+      - redisdata:/data
+    healthcheck:
+      test: ['CMD', 'redis-cli', 'ping']
+      interval: 1s
+      timeout: 3s
+      retries: 5
+      start_period: 5s
+    networks:
+      - nginx-proxy_gyubuntu_net
+
+volumes:
+  db_data:
+  redisdata:
+    driver: local
+
+networks:
+  nginx-proxy_gyubuntu_net:
+    external: true
