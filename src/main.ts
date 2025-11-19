@@ -1,14 +1,14 @@
 console.log('[VERY_EARLY_DEBUG] Main TS file loaded and starting bootstrap');
 
 import { ValidationPipe } from '@nestjs/common';
-import { NestFactory, Reflector } from '@nestjs/core';
+import { NestFactory } from '@nestjs/core';
 import { AppModule } from './app.module';
-import { ApiInterceptor } from './global/api/api.interceptor';
-import { HttpExceptionFilter } from './global/filter/http-exception.filter';
 import { winstonLogger } from './global/utils/winston.config';
 
 async function bootstrap() {
-  const app = await NestFactory.create(AppModule);
+  const app = await NestFactory.create(AppModule, {
+    abortOnError: false,
+  });
   const logger = winstonLogger;
   app.setGlobalPrefix('api');
   app.useLogger(logger);
@@ -22,9 +22,9 @@ async function bootstrap() {
       },
     }),
   );
-  const reflector = app.get(Reflector);
-  app.useGlobalFilters(new HttpExceptionFilter(logger));
-  app.useGlobalInterceptors(new ApiInterceptor(reflector));
+  // const reflector = app.get(Reflector);
+  // app.useGlobalFilters(new HttpExceptionFilter(logger));
+  // app.useGlobalInterceptors(new ApiInterceptor(reflector));
   console.log(`[MY_DEBUG] Raw process.env.PORT: ${process.env.PORT}`);
   const portToListen = process.env.PORT ? parseInt(process.env.PORT, 10) : 8000;
   console.log(`[MY_DEBUG] Parsed port to listen: ${portToListen}`);
@@ -34,3 +34,4 @@ async function bootstrap() {
   );
 }
 bootstrap();
+console.log('--- bootstrap() 함수 종료 후 (이게 찍히면 문제!) ---');
