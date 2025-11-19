@@ -11,7 +11,6 @@ import { AuthModule } from './auth/auth.module';
 import { JwtGuard } from './auth/guards/jwt.guard';
 import { BankModule } from './bank/bank.module';
 import { GlobalModule } from './global/global.module';
-// import { RequestMiddleware } from './global/utils/logger.middleware';
 import { BudgetModule } from './budget/budget.module';
 import { RequestMiddleware } from './global/utils/logger.middleware';
 import { PaymentMethodModule } from './payment-method/payment-method.module';

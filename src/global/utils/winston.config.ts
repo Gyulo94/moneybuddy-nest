@@ -4,6 +4,8 @@ import * as winston from 'winston';
 import * as winstonDaily from 'winston-daily-rotate-file';
 
 const env = process.env.NODE_ENV;
+const APP_NAME = process.env.APP_NAME;
+const PROJECT_NAME = process.env.PROJECT_NAME;
 
 const apeendTimestamp = winston.format((info, opts: { tz: string }) => {
   if (opts.tz) {
@@ -20,18 +22,29 @@ const dailyOptions = {
   level: 'http',
   datePattern: 'YYYY-MM-DD',
   dirname: __dirname + '/../../../logs',
-  filename: `${process.env.PROJECT_NAME}.log.%DATE%`,
+  filename: `${PROJECT_NAME}.log.%DATE%`,
   maxFiles: 30,
   zippedArchive: true,
   colorize: false,
-  handleExceptions: true,
   json: false,
 };
 
 export const winstonLogger = WinstonModule.createLogger({
+  format: winston.format.combine(
+    apeendTimestamp({ tz: 'Asia/Seoul' }),
+    winston.format.json(),
+    env !== 'production'
+      ? winston.format.colorize({ all: true })
+      : winston.format.uncolorize(),
+    winston.format.printf((info) => {
+      const stack =
+        info.stack || info.trace ? `\n${info.stack || info.trace}` : '';
+      return `${info.timestamp} - ${info.level} [${process.pid}] [${info.context || APP_NAME}] : ${info.message}${stack}`;
+    }),
+  ),
   transports: [
     new winston.transports.Console({
-      level: env === 'production' ? 'http' : 'silly',
+      level: env === 'production' ? 'info' : 'silly',
       format:
         env === 'production'
           ? winston.format.simple()
@@ -41,14 +54,9 @@ export const winstonLogger = WinstonModule.createLogger({
                 prettyPrint: true,
               }),
             ),
+      handleExceptions: true,
+      handleRejections: true,
     }),
     new winstonDaily(dailyOptions),
   ],
-  format: winston.format.combine(
-    apeendTimestamp({ tz: 'Asia/Seoul' }),
-    winston.format.json(),
-    winston.format.printf((info) => {
-      return `${info.timestamp} - ${info.level} [${process.pid}] : ${info.message}`;
-    }),
-  ),
 });
