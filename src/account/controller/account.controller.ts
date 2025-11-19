@@ -43,7 +43,7 @@ export class AccountController {
   }
 
   @Get('all')
-  async findAccountsById(
+  async findAccountsByUserId(
     @CurrentUser() user: Payload,
   ): Promise<AccountResponse[]> {
     this.LOGGER.log(
@@ -55,6 +55,20 @@ export class AccountController {
     this.LOGGER.log(`계좌 조회 완료`);
     this.LOGGER.log(
       `--------------------계좌 조회 컨트롤러 종료--------------------`,
+    );
+    return response;
+  }
+
+  @Get(':id')
+  async findAccountById(@Param('id') id: string): Promise<AccountResponse> {
+    this.LOGGER.log(
+      `--------------------계좌 상세 조회 컨트롤러 실행--------------------`,
+    );
+    this.LOGGER.log(`계좌 상세 조회 요청 받음`);
+    const response: AccountResponse = await this.accountService.findById(id);
+    this.LOGGER.log(`계좌 상세 조회 완료`);
+    this.LOGGER.log(
+      `--------------------계좌 상세 조회 컨트롤러 종료--------------------`,
     );
     return response;
   }

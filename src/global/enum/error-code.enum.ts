@@ -16,6 +16,7 @@ export enum ErrorCode {
   // 계좌 관련 에러
   ACCOUNT_NOT_FOUND = 'ACCOUNT_001',
   CREATE_ACCOUNT_FAILED = 'ACCOUNT_002',
+  ACCOUNT_HAS_TRANSACTIONS = 'ACCOUNT_003',
 
   // 예산 관련 에러
   BUDGET_NOT_FOUND = 'BUDGET_001',
@@ -93,6 +94,10 @@ export const ErrorCodeMap: Record<
   [ErrorCode.CREATE_ACCOUNT_FAILED]: {
     status: HttpStatus.INTERNAL_SERVER_ERROR,
     message: '계좌 생성에 실패했습니다.',
+  },
+  [ErrorCode.ACCOUNT_HAS_TRANSACTIONS]: {
+    status: HttpStatus.BAD_REQUEST,
+    message: '해당 계좌에는 거래내역이 존재하여 삭제할 수 없습니다.',
   },
 
   // 예산 관련

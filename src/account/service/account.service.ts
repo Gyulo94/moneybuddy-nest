@@ -73,12 +73,18 @@ export class AccountService {
     return response;
   }
 
-  async findById(id: string): Promise<Account> {
+  async findById(id: string): Promise<AccountResponse> {
+    this.LOGGER.log(
+      `--------------------계좌 상세 조회 서비스 실행--------------------`,
+    );
     const account = await this.accountRepository.findById(id);
-    if (!account) {
-      throw new ApiException(ErrorCode.ACCOUNT_NOT_FOUND);
-    }
-    return account;
+    this.LOGGER.log(`1. 계좌 존재 여부 확인 완료`);
+    const response = AccountResponse.fromModel(account);
+    this.LOGGER.log(`2. 계좌 상세 조회 완료`);
+    this.LOGGER.log(
+      `--------------------계좌 상세 조회 서비스 종료--------------------`,
+    );
+    return response;
   }
 
   async updateAccount(
@@ -109,10 +115,17 @@ export class AccountService {
     this.LOGGER.log(
       `--------------------계좌 삭제 서비스 실행--------------------`,
     );
-    this.LOGGER.log(`1. 계좌 존재 여부 확인 완료`);
-    await this.findById(id);
-    await this.accountRepository.delete(id);
-    this.LOGGER.log(`2. 계좌 삭제 완료`);
+    try {
+      this.LOGGER.log(`1. 계좌 존재 여부 확인 완료`);
+      await this.findById(id);
+      await this.accountRepository.delete(id);
+      this.LOGGER.log(`2. 계좌 삭제 완료`);
+    } catch (error) {
+      if (error.code === 'P2003') {
+        throw new ApiException(ErrorCode.ACCOUNT_HAS_TRANSACTIONS);
+      }
+      throw error;
+    }
     this.LOGGER.log(
       `--------------------계좌 삭제 서비스 종료--------------------`,
     );

@@ -151,14 +151,14 @@ export class TransactionController {
   @Delete('delete')
   @Message(ResponseMessage.DELETE_TRANSACTION_SUCCESS)
   public async deleteTransactions(
-    @Body('transactionIds') transactionIds: string[],
+    @Body('ids') ids: string[],
     @CurrentUser() user: Payload,
   ): Promise<void> {
     this.LOGGER.log(
       `--------------------거래 내역 삭제 컨트롤러 실행--------------------`,
     );
     this.LOGGER.log(`거래 내역 삭제 요청 받음`);
-    await this.transactionService.deleteTransactions(transactionIds, user.id);
+    await this.transactionService.deleteTransactions(ids, user.id);
     this.LOGGER.log(`거래 내역 삭제 완료`);
     this.LOGGER.log(
       `--------------------거래 내역 삭제 컨트롤러 종료--------------------`,
