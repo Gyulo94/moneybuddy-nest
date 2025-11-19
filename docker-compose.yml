@@ -2,13 +2,13 @@ version: '3.8'
 
 services:
   moneybuddy-server:
-    TZ: Asia/Seoul
     build: .
     image: ${DOCKER_USERNAME}/moneybuddy-server
     restart: always
     env_file:
       - .env
     environment:
+      - TZ=Asia/Seoul
       - DATABASE_URL=${DATABASE_URL}
       - NODE_ENV=${NODE_ENV}
       - REDIS_HOST=${REDIS_HOST}
@@ -19,6 +19,7 @@ services:
     depends_on:
       - moneybuddy-db
       - moneybuddy-redis
+    command: sh -c "npx prisma migrate deploy && npm run start:prod"
     networks:
       - nginx-proxy_gyubuntu_net
 
@@ -35,14 +36,24 @@ services:
       - db_data:/var/lib/postgresql/data
     env_file:
       - .env
+    healthcheck:
+      test:
+        [
+          'CMD-SHELL',
+          'pg_isready -U $$POSTGRES_USER -d $$POSTGRES_DB -h localhost',
+        ]
+      interval: 5s
+      timeout: 5s
+      retries: 5
+      start_period: 10s
     networks:
       - nginx-proxy_gyubuntu_net
 
   moneybuddy-redis:
     image: redis:latest
     restart: always
-    # ports:
-    #   - '6379:6379'
+    ports:
+      - '6379:6379'
     command: redis-server --appendonly yes
     volumes:
       - redisdata:/data
