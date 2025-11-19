@@ -1,8 +1,10 @@
-FROM node:20
+FROM node:20 AS builder
 
 WORKDIR /app
 
 COPY package*.json ./
+
+RUN npm install
 
 COPY . .
 
@@ -10,6 +12,15 @@ RUN npx prisma generate
 
 RUN npm run build
 
-EXPOSE 8010
+FROM node:20-alpine
 
-CMD ["pm2-runtime", "npm", "--", "run", "start:prod"]
+WORKDIR /app
+
+COPY --from=builder /app/node_modules ./node_modules
+COPY --from=builder /app/dist ./dist
+
+COPY .env ./.env
+
+EXPOSE 8000
+
+CMD ["node", "dist/main"]
