@@ -23,6 +23,6 @@ async function bootstrap() {
   const reflector = app.get(Reflector);
   app.useGlobalFilters(new HttpExceptionFilter(logger));
   app.useGlobalInterceptors(new ApiInterceptor(reflector));
-  await app.listen(process.env.PORT);
+  await app.listen(process.env.PORT ? parseInt(process.env.PORT, 10) : 8000);
 }
 bootstrap();
