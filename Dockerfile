@@ -2,6 +2,8 @@ FROM node:20 AS builder
 
 WORKDIR /app
 
+RUN apt-get update && apt-get install -y build-essential python3
+
 COPY package*.json ./
 
 RUN npm install
