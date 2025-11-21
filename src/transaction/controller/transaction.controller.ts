@@ -75,11 +75,14 @@ export class TransactionController {
       `--------------------월별 거래 내역 조회 컨트롤러 실행--------------------`,
     );
     this.LOGGER.log(`월별 거래 내역 조회 요청 받음`);
+    console.log('currentDate:', currentDate);
     const response: TransactionByDateResponse[] =
       await this.transactionService.findTransactionsByMonth(
         currentDate,
         user.id,
       );
+    console.log(response);
+
     this.LOGGER.log(`월별 거래 내역 조회 완료`);
     this.LOGGER.log(
       `--------------------월별 거래 내역 조회 컨트롤러 종료--------------------`,

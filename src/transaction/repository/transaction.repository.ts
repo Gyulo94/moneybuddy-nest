@@ -27,7 +27,7 @@ export class TransactionRepository {
     const transactions = await this.prisma.transaction.findMany({
       where: {
         userId,
-        createdAt: {
+        transactionAt: {
           gte: startDateTime,
           lte: endDateTime,
         },
