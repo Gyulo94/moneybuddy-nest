@@ -1,7 +1,7 @@
 import { Injectable, Logger } from '@nestjs/common';
 import { EventEmitter2 } from '@nestjs/event-emitter';
 import { Image, User } from '@prisma/client';
-import { compareSync, hashSync } from 'bcrypt';
+import { compareSync, hash, hashSync } from 'bcrypt';
 import { Transactional } from 'src/global/decorator/transactional.decorator';
 import { ErrorCode } from 'src/global/enum/error-code.enum';
 import { UserSignupEvent } from 'src/global/event/user-signup.event';
@@ -41,8 +41,7 @@ export class UserService {
     const id = uuid();
     this.LOGGER.log(`2. 새로운 유저 ID 생성`);
 
-    // const hashedPassword = provider ? '' : await hashSync(password, 10);
-    const hashedPassword = 'TEST_PASSWORD_HASHED';
+    const hashedPassword = provider ? '' : await hash(password, 10);
     this.LOGGER.log(`3. 비밀번호 해싱 완료`);
 
     this.LOGGER.log(`4. 이미지 생성 예정 (일반계정이면 건너뜀 7번으로 넘어감)`);
