@@ -1,7 +1,7 @@
 import { Injectable, Logger } from '@nestjs/common';
 import { EventEmitter2 } from '@nestjs/event-emitter';
 import { Image, User } from '@prisma/client';
-import { compareSync, hash, hashSync } from 'bcrypt';
+import * as bcrypt from 'bcryptjs';
 import { Transactional } from 'src/global/decorator/transactional.decorator';
 import { ErrorCode } from 'src/global/enum/error-code.enum';
 import { UserSignupEvent } from 'src/global/event/user-signup.event';
@@ -40,8 +40,7 @@ export class UserService {
 
     const id = uuid();
     this.LOGGER.log(`2. 새로운 유저 ID 생성`);
-
-    const hashedPassword = provider ? '' : await hash(password, 10);
+    const hashedPassword = provider ? '' : await bcrypt.hash(password, 10);
     this.LOGGER.log(`3. 비밀번호 해싱 완료`);
 
     this.LOGGER.log(`4. 이미지 생성 예정 (일반계정이면 건너뜀 7번으로 넘어감)`);
@@ -94,12 +93,12 @@ export class UserService {
     }
 
     this.LOGGER.log(`2. 기존 비밀번호와 일치하는가?`);
-    if (user && compareSync(password, user.password)) {
+    if (user && (await bcrypt.compare(password, user.password))) {
       this.LOGGER.error(`비밀번호가 기존 비밀번호와 일치하므로 예외 발생`);
       throw new ApiException(ErrorCode.SAME_ORIGINAL_PASSWORD);
     }
 
-    const hashedPassword = await hashSync(password, 10);
+    const hashedPassword = await bcrypt.hash(password, 10);
 
     this.LOGGER.log(`3. 비밀번호 해싱 완료 및 유저 비밀번호 업데이트`);
     await this.userRepository.update(

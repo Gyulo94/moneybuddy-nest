@@ -1,7 +1,7 @@
 import { Injectable, Logger } from '@nestjs/common';
 import { JwtService } from '@nestjs/jwt';
 import { User } from '@prisma/client';
-import { compare } from 'bcrypt';
+import * as bcrypt from 'bcryptjs';
 import { ErrorCode } from 'src/global/enum/error-code.enum';
 import { ApiException } from 'src/global/exception/api.exception';
 import { Payload } from 'src/global/types/payload';
@@ -90,7 +90,7 @@ export class AuthService {
       this.LOGGER.error(`유저가 존재하지 않으므로 예외 발생`);
       throw new ApiException(ErrorCode.USER_NOT_FOUND);
     }
-    if (user && (await compare(dto.password, user.password))) {
+    if (user && (await bcrypt.compare(dto.password, user.password))) {
       this.LOGGER.log(`4. 비밀번호 일치함`);
       const { password, ...rest } = user;
       return rest;
