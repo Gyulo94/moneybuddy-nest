@@ -41,7 +41,8 @@ export class UserService {
     const id = uuid();
     this.LOGGER.log(`2. 새로운 유저 ID 생성`);
 
-    const hashedPassword = provider ? '' : await hashSync(password, 10);
+    // const hashedPassword = provider ? '' : await hashSync(password, 10);
+    const hashedPassword = 'TEST_PASSWORD_HASHED';
     this.LOGGER.log(`3. 비밀번호 해싱 완료`);
 
     this.LOGGER.log(`4. 이미지 생성 예정 (일반계정이면 건너뜀 7번으로 넘어감)`);
